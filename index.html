@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Text to Number (Leet) Converter</title>
+  <title>Welcome - Change Plain Text</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -30,10 +30,6 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 15px;
       transition: var(--transition);
     }
 
@@ -41,70 +37,97 @@
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     }
 
-    .container {
+    /* Header Styles */
+    header {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
-      border-radius: var(--border-radius);
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      padding: 25px;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-
-    body.dark-mode .container {
-      background: rgba(30, 30, 46, 0.95);
-      color: #f8f9fa;
-    }
-
-    .container::before {
-      content: '';
-      position: absolute;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
       top: 0;
-      left: 0;
-      right: 0;
-      height: 5px;
-      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      z-index: 1000;
+      transition: var(--transition);
     }
 
-    .header {
+    body.dark-mode header {
+      background: rgba(30, 30, 46, 0.95);
+    }
+
+    nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      padding: 15px 5%;
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
-    h2 {
-      color: var(--primary-color);
+    .logo {
       font-size: 24px;
       font-weight: 700;
-      margin-bottom: 5px;
+      color: var(--primary-color);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    body.dark-mode h2 {
+    body.dark-mode .logo {
       color: var(--success-color);
     }
 
-    .subtitle {
-      font-size: 13px;
-      color: var(--gray-color);
-      margin-top: -5px;
-      margin-bottom: 10px;
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--dark-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    body.dark-mode .nav-links a {
+      color: #f8f9fa;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-color);
+    }
+
+    body.dark-mode .nav-links a:hover {
+      color: var(--success-color);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary-color);
+      transition: var(--transition);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
     }
 
     .theme-toggle {
       background: none;
       border: none;
       color: var(--primary-color);
-      font-size: 18px;
+      font-size: 20px;
       cursor: pointer;
       transition: var(--transition);
       padding: 8px;
       border-radius: 50%;
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -119,1715 +142,829 @@
       color: var(--warning-color);
     }
 
-    .input-group {
-      margin-bottom: 15px;
+    /* Hero Section */
+    .hero {
+      padding: 80px 5%;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
     }
 
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      color: var(--dark-color);
-      font-size: 14px;
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1;
     }
 
-    body.dark-mode label {
-      color: #f8f9fa;
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      animation: fadeInUp 1s ease;
     }
 
-    input, textarea, select {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: var(--border-radius);
-      border: 1px solid #ddd;
-      font-size: 15px;
-      transition: var(--transition);
-      background-color: #fff;
-      color: var(--dark-color);
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    body.dark-mode input, 
-    body.dark-mode textarea, 
-    body.dark-mode select {
-      background-color: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
-      color: #f8f9fa;
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     }
 
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      opacity: 0.9;
     }
 
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .button-group {
+    .hero-buttons {
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
-    button {
-      padding: 10px 15px;
+    .btn {
+      padding: 12px 30px;
       border: none;
       border-radius: var(--border-radius);
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
-      display: flex;
+      text-decoration: none;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
+      gap: 8px;
     }
 
-    .primary-btn {
+    .btn-primary {
       background: var(--primary-color);
       color: white;
-      flex: 1;
     }
 
-    .primary-btn:hover {
+    .btn-primary:hover {
       background: var(--secondary-color);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
     }
 
-    .secondary-btn {
-      background: var(--light-color);
-      color: var(--dark-color);
-    }
-
-    .secondary-btn:hover {
-      background: #e9ecef;
-    }
-
-    body.dark-mode .secondary-btn {
-      background: rgba(255, 255, 255, 0.1);
-      color: #f8f9fa;
-    }
-
-    .copy-btn {
-      background: var(--success-color);
-      color: var(--dark-color);
-    }
-
-    .copy-btn:hover {
-      background: #00d084;
-    }
-
-    .clear-btn {
-      background: var(--danger-color);
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
       color: white;
+      border: 2px solid white;
     }
 
-    .clear-btn:hover {
-      background: #e63946;
+    .btn-secondary:hover {
+      background: white;
+      color: var(--primary-color);
     }
 
-    .share-btn {
-      background: var(--accent-color);
+    /* Main Content */
+    main {
+      padding: 60px 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 50px;
       color: white;
-    }
-
-    .share-btn:hover {
-      background: #d70466;
-    }
-
-    .result-container {
       position: relative;
-      margin-bottom: 15px;
     }
 
-    .char-count {
+    body.dark-mode .section-title {
+      color: var(--success-color);
+    }
+
+    .section-title::after {
+      content: '';
       position: absolute;
-      bottom: -18px;
-      right: 0;
-      font-size: 11px;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: var(--accent-color);
+      border-radius: 2px;
+    }
+
+    /* Choice Section */
+    .choice-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 40px;
+      margin-bottom: 60px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      transition: var(--transition);
+    }
+
+    body.dark-mode .choice-section {
+      background: rgba(30, 30, 46, 0.95);
+    }
+
+    .choice-title {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      color: var(--primary-color);
+    }
+
+    body.dark-mode .choice-title {
+      color: var(--success-color);
+    }
+
+    .choice-description {
+      text-align: center;
       color: var(--gray-color);
+      margin-bottom: 40px;
+      font-size: 1.1rem;
     }
 
-    .mapping-breakdown {
-      background: var(--light-color);
-      padding: 12px;
+    body.dark-mode .choice-description {
+      color: #b8bcc8;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
       border-radius: var(--border-radius);
-      margin-top: 15px;
+      padding: 30px;
+      text-align: center;
+      transition: var(--transition);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    body.dark-mode .card {
+      background: rgba(30, 30, 46, 0.95);
+      color: #f8f9fa;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      transform: scaleX(0);
+      transition: var(--transition);
+    }
+
+    .card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
       margin-bottom: 15px;
-      font-size: 13px;
-      color: var(--dark-color);
-      border-left: 4px solid var(--primary-color);
+      color: var(--primary-color);
     }
 
-    body.dark-mode .mapping-breakdown {
-      background: rgba(255, 255, 255, 0.1);
-      color: #f8f9fa;
+    body.dark-mode .card h3 {
+      color: var(--success-color);
     }
 
-    .translation {
-      background: rgba(67, 97, 238, 0.1);
-      padding: 12px;
+    .card p {
+      color: var(--gray-color);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    body.dark-mode .card p {
+      color: #b8bcc8;
+    }
+
+    .card-btn {
+      background: var(--primary-color);
+      color: white;
+      padding: 10px 20px;
       border-radius: var(--border-radius);
-      margin-top: 15px;
-      font-size: 13px;
-      color: var(--dark-color);
-      border-left: 4px solid var(--accent-color);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      transition: var(--transition);
     }
 
-    body.dark-mode .translation {
-      background: rgba(247, 37, 133, 0.1);
-      color: #f8f9fa;
+    .card:hover .card-btn {
+      background: var(--secondary-color);
+      transform: translateX(5px);
     }
 
-    .hidden {
+    /* FAQ Section */
+    .faq-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 40px;
+      margin-bottom: 60px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .faq-section {
+      background: rgba(30, 30, 46, 0.95);
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding-bottom: 20px;
+    }
+
+    body.dark-mode .faq-item {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .faq-question {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1rem;
+    }
+
+    body.dark-mode .faq-question {
+      color: var(--success-color);
+    }
+
+    .faq-question i {
+      transition: var(--transition);
+    }
+
+    .faq-question.active i {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      color: var(--gray-color);
+      line-height: 1.6;
       display: none;
     }
 
+    body.dark-mode .faq-answer {
+      color: #b8bcc8;
+    }
+
+    .faq-answer.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 40px 5%;
+      margin-top: 80px;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 20px;
+      color: var(--success-color);
+    }
+
+    .footer-section p {
+      line-height: 1.6;
+      opacity: 0.8;
+      margin-bottom: 15px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .social-link:hover {
+      background: var(--primary-color);
+      transform: translateY(-5px);
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+      color: var(--success-color);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      opacity: 0.8;
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    body.dark-mode .mobile-menu-toggle {
+      color: var(--success-color);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: var(--transition);
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+      }
+
+      body.dark-mode .nav-links {
+        background: rgba(30, 30, 46, 0.98);
+      }
+
+      .nav-links.active {
+        right: 0;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .social-links {
+        justify-content: center;
+      }
+    }
+
+    /* Notification */
     .notification {
       position: fixed;
-      top: 20px;
+      bottom: 20px;
       right: 20px;
       background: var(--success-color);
       color: var(--dark-color);
-      padding: 12px 18px;
+      padding: 15px 20px;
       border-radius: var(--border-radius);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 1000;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
       opacity: 0;
-      transform: translateY(-20px);
+      transform: translateY(20px);
       transition: var(--transition);
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 14px;
+      gap: 10px;
     }
 
     .notification.show {
       opacity: 1;
       transform: translateY(0);
     }
-
-    .tabs {
-      display: flex;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    body.dark-mode .tabs {
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .tab {
-      padding: 8px 12px;
-      cursor: pointer;
-      font-weight: 600;
-      color: var(--gray-color);
-      border-bottom: 2px solid transparent;
-      transition: var(--transition);
-      font-size: 14px;
-    }
-
-    .tab.active {
-      color: var(--primary-color);
-      border-bottom-color: var(--primary-color);
-    }
-
-    body.dark-mode .tab.active {
-      color: var(--success-color);
-      border-bottom-color: var(--success-color);
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .history-container {
-      max-height: 200px;
-      overflow-y: auto;
-      margin-top: 12px;
-    }
-
-    .history-item {
-      padding: 10px;
-      border-radius: var(--border-radius);
-      margin-bottom: 8px;
-      background: var(--light-color);
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    body.dark-mode .history-item {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .history-item:hover {
-      background: #e9ecef;
-      transform: translateX(5px);
-    }
-
-    body.dark-mode .history-item:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .history-text {
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-size: 14px;
-    }
-
-    .history-result {
-      font-weight: 600;
-      color: var(--primary-color);
-      margin-left: 8px;
-      font-size: 14px;
-    }
-
-    body.dark-mode .history-result {
-      color: var(--success-color);
-    }
-
-    .delete-history {
-      background: none;
-      border: none;
-      color: var(--danger-color);
-      cursor: pointer;
-      padding: 5px;
-      margin-left: 8px;
-    }
-
-    .info-section {
-      background: rgba(67, 97, 238, 0.05);
-      padding: 12px;
-      border-radius: var(--border-radius);
-      margin-top: 15px;
-      font-size: 13px;
-      color: var(--dark-color);
-    }
-
-    body.dark-mode .info-section {
-      background: rgba(255, 255, 255, 0.05);
-      color: #f8f9fa;
-    }
-
-    .info-title {
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--primary-color);
-      font-size: 14px;
-    }
-
-    body.dark-mode .info-title {
-      color: var(--success-color);
-    }
-
-    .mode-selector {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .mode-option {
-      flex: 1;
-      padding: 8px;
-      text-align: center;
-      border-radius: var(--border-radius);
-      background: var(--light-color);
-      cursor: pointer;
-      transition: var(--transition);
-      font-size: 13px;
-    }
-
-    .mode-option.active {
-      background: var(--primary-color);
-      color: white;
-    }
-
-    body.dark-mode .mode-option {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    body.dark-mode .mode-option.active {
-      background: var(--success-color);
-      color: var(--dark-color);
-    }
-
-    /* Intro Screen Styles */
-    .intro-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      opacity: 1;
-      transition: opacity 0.5s ease;
-    }
-
-    body.dark-mode .intro-overlay {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    }
-
-    .intro-content {
-      text-align: center;
-      color: white;
-      padding: 30px;
-      border-radius: var(--border-radius);
-      background: rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(5px);
-      max-width: 80%;
-      animation: fadeInScale 0.8s ease;
-    }
-
-    .intro-title {
-      font-size: 28px;
-      margin-bottom: 15px;
-      font-weight: 700;
-    }
-
-    .intro-subtitle {
-      font-size: 16px;
-      margin-bottom: 20px;
-      opacity: 0.9;
-    }
-
-    .intro-icon {
-      font-size: 50px;
-      margin-bottom: 20px;
-      color: var(--success-color);
-    }
-
-    .intro-progress {
-      width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 2px;
-      overflow: hidden;
-      margin-top: 20px;
-    }
-
-    .intro-progress-bar {
-      height: 100%;
-      background: var(--success-color);
-      width: 0;
-      animation: progressAnimation 2s ease forwards;
-    }
-
-    @keyframes fadeInScale {
-      from {
-        opacity: 0;
-        transform: scale(0.8);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes progressAnimation {
-      to {
-        width: 100%;
-      }
-    }
-
-    /* New Styles for Additional Features */
-    .template-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .template-item {
-      padding: 6px 10px;
-      background: var(--light-color);
-      border-radius: 20px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    body.dark-mode .template-item {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .template-item:hover {
-      background: var(--primary-color);
-      color: white;
-    }
-
-    .template-item i {
-      font-size: 10px;
-    }
-
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .stat-card {
-      background: var(--light-color);
-      padding: 10px;
-      border-radius: var(--border-radius);
-      text-align: center;
-    }
-
-    body.dark-mode .stat-card {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .stat-value {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--primary-color);
-    }
-
-    body.dark-mode .stat-value {
-      color: var(--success-color);
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--gray-color);
-      margin-top: 3px;
-    }
-
-    .custom-mapping-container {
-      margin-top: 15px;
-    }
-
-    .custom-mapping-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 8px;
-      align-items: center;
-    }
-
-    .custom-mapping-input {
-      flex: 1;
-    }
-
-    .remove-mapping-btn {
-      background: var(--danger-color);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .add-mapping-btn {
-      background: var(--success-color);
-      color: var(--dark-color);
-      border: none;
-      border-radius: var(--border-radius);
-      padding: 6px 12px;
-      cursor: pointer;
-      font-size: 12px;
-      margin-top: 5px;
-    }
-
-    .batch-container {
-      margin-top: 15px;
-    }
-
-    .batch-item {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 8px;
-      align-items: center;
-    }
-
-    .batch-input {
-      flex: 1;
-    }
-
-    .batch-result {
-      flex: 1;
-      background: var(--light-color);
-      padding: 8px;
-      border-radius: var(--border-radius);
-      font-size: 13px;
-    }
-
-    body.dark-mode .batch-result {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .remove-batch-btn {
-      background: var(--danger-color);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .add-batch-btn {
-      background: var(--success-color);
-      color: var(--dark-color);
-      border: none;
-      border-radius: var(--border-radius);
-      padding: 6px 12px;
-      cursor: pointer;
-      font-size: 12px;
-      margin-top: 5px;
-    }
-
-    .share-options {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      padding: 10px;
-      z-index: 100;
-      display: none;
-    }
-
-    body.dark-mode .share-options {
-      background: var(--dark-color);
-    }
-
-    .share-options.show {
-      display: block;
-    }
-
-    .share-option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px;
-      cursor: pointer;
-      border-radius: 6px;
-      transition: var(--transition);
-    }
-
-    .share-option:hover {
-      background: var(--light-color);
-    }
-
-    body.dark-mode .share-option:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .presentation-mode {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--dark-color);
-      color: white;
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      padding: 20px;
-    }
-
-    .presentation-mode.active {
-      display: flex;
-    }
-
-    .presentation-content {
-      max-width: 800px;
-      width: 100%;
-      text-align: center;
-    }
-
-    .presentation-output {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      word-break: break-all;
-    }
-
-    .presentation-input {
-      font-size: 1.5rem;
-      margin-bottom: 30px;
-      opacity: 0.8;
-    }
-
-    .presentation-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: none;
-      border: none;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    .clipboard-monitor {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--primary-color);
-      color: white;
-      padding: 10px 15px;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      gap: 8px;
-      z-index: 100;
-    }
-
-    .clipboard-monitor.active {
-      display: flex;
-    }
-
-    @media (max-width: 576px) {
-      .container {
-        padding: 15px;
-      }
-      
-      h2 {
-        font-size: 20px;
-      }
-      
-      .subtitle {
-        font-size: 12px;
-      }
-      
-      .button-group {
-        flex-direction: column;
-      }
-      
-      button {
-        padding: 12px;
-      }
-      
-      .intro-title {
-        font-size: 24px;
-      }
-      
-      .intro-subtitle {
-        font-size: 14px;
-      }
-
-      .stats-container {
-        grid-template-columns: 1fr;
-      }
-
-      .presentation-output {
-        font-size: 2rem;
-      }
-    }
   </style>
 </head>
 <body>
-  <!-- Intro Screen -->
-  <div class="intro-overlay" id="introOverlay">
-    <div class="intro-content">
-      <div class="intro-icon">
-        <i class="fas fa-hashtag"></i>
-      </div>
-      <h1 class="intro-title">Welcome to Text to Number Converter!</h1>
-      <p class="intro-subtitle">Konversi huruf menjadi angka berdasarkan kemiripan bentuk.</p>
-      <div class="intro-progress">
-        <div class="intro-progress-bar"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="header">
-      <div>
-        <h2>Text to Number Converter</h2>
-        <p class="subtitle">Konversi huruf menjadi angka berdasarkan kemiripan bentuk.</p>
-      </div>
-      <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
-        <i class="fas fa-moon"></i>
+  <!-- Header Navigation -->
+  <header>
+    <nav>
+      <a href="#" class="logo">
+        <i class="fas fa-magic"></i>
+        Text Converter
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li>
+          <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+            <i class="fas fa-moon"></i>
+          </button>
+        </li>
+      </ul>
+      <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
       </button>
-    </div>
+    </nav>
+  </header>
 
-    <div class="tabs">
-      <div class="tab active" data-tab="converter">Converter</div>
-      <div class="tab" data-tab="reverse">Reverse</div>
-      <div class="tab" data-tab="history">History</div>
-      <div class="tab" data-tab="templates">Templates</div>
-      <div class="tab" data-tab="stats">Stats</div>
-      <div class="tab" data-tab="settings">Settings</div>
-    </div>
-
-    <div class="tab-content active" id="converter">
-      <div class="input-group">
-        <label for="inputText">Enter text:</label>
-        <input id="inputText" placeholder="Type here..." oninput="convert()" />
-        <p style="font-size:12px;color:#666;margin-top:-5px;margin-bottom:8px;">Contoh: hello, selamat, zeli, random text...</p>
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <h1>WELCOME TO CHANGE PLAIN TEXT TO WHAT YOU WANT</h1>
+      <p>Transform your text with powerful conversion tools</p>
+      <div class="hero-buttons">
+        <a href="#features" class="btn btn-primary">
+          <i class="fas fa-rocket"></i> Get Started
+        </a>
+        <a href="#faq" class="btn btn-secondary">
+          <i class="fas fa-question-circle"></i> Learn More
+        </a>
       </div>
+    </div>
+  </section>
 
-      <div class="input-group">
-        <label for="conversionMode">Conversion Mode:</label>
-        <div class="mode-selector">
-          <div class="mode-option active" data-mode="standard">Standard</div>
-          <div class="mode-option" data-mode="advanced">Advanced</div>
-          <div class="mode-option" data-mode="minimal">Minimal</div>
-          <div class="mode-option" data-mode="custom">Custom</div>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <label for="output">Result:</label>
-        <div class="result-container">
-          <textarea id="output" rows="4" readonly></textarea>
-          <div class="char-count" id="charCount">0 characters</div>
-        </div>
-        <div class="button-group">
-          <button id="copyBtn" class="copy-btn hidden" onclick="copyResult()">
-            <i class="fas fa-copy"></i> Copy
-          </button>
-          <button id="shareBtn" class="share-btn hidden" onclick="toggleShareOptions()">
-            <i class="fas fa-share"></i> Share
-          </button>
-          <button id="presentBtn" class="secondary-btn hidden" onclick="openPresentationMode()">
-            <i class="fas fa-expand"></i> Present
-          </button>
-          <button id="clearBtn" class="clear-btn hidden" onclick="clearText()">
-            <i class="fas fa-trash"></i> Clear
-          </button>
-        </div>
-        <div class="share-options" id="shareOptions">
-          <div class="share-option" onclick="shareToSocial('twitter')">
-            <i class="fab fa-twitter"></i> Twitter
+  <!-- Main Content -->
+  <main>
+    <!-- Choice Section -->
+    <section class="choice-section" id="features">
+      <h2 class="choice-title">Choose Your Conversion Tool</h2>
+      <p class="choice-description">Select the tool that best fits your needs</p>
+      
+      <div class="cards-grid">
+        <!-- Text to Number Card -->
+        <a href="text-number.html" class="card">
+          <div class="card-icon">
+            <i class="fas fa-hashtag"></i>
           </div>
-          <div class="share-option" onclick="shareToSocial('facebook')">
-            <i class="fab fa-facebook"></i> Facebook
+          <h3>Text to Number</h3>
+          <p>Convert text to numbers based on shape similarity. Transform your messages into unique numeric codes.</p>
+          <div class="card-btn">
+            <i class="fas fa-arrow-right"></i> Try Now
           </div>
-          <div class="share-option" onclick="shareToSocial('whatsapp')">
-            <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+
+        <!-- Language G Card -->
+        <a href="languageG.html" class="card">
+          <div class="card-icon">
+            <i class="fas fa-language"></i>
           </div>
-          <div class="share-option" onclick="downloadAsFile()">
-            <i class="fas fa-download"></i> Download as file
+          <h3>Language G (Especially Indonesia)</h3>
+          <p>Specialized language processing tool with focus on Indonesian language features and translations.</p>
+          <div class="card-btn">
+            <i class="fas fa-arrow-right"></i> Try Now
           </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+      <h2 class="section-title" style="color: var(--primary-color); margin-bottom: 30px;">Frequently Asked Questions</h2>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+          <span>What is Text to Number conversion?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Text to Number conversion is a process that transforms alphabetic characters into numbers based on their visual similarity. For example, 'E' becomes '3', 'O' becomes '0', and 'A' becomes '4'. This is often used in leet speak and for creating unique numeric representations of text.
         </div>
       </div>
 
-      <div id="mappingBreakdown" class="mapping-breakdown hidden"></div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+          <span>How does Language G work?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Language G is a specialized language processing tool that focuses on Indonesian language features. It can help with translation, transliteration, and various text processing tasks specific to Indonesian language structure and grammar.
+        </div>
+      </div>
 
-      <div id="translation" class="translation hidden">
-        <strong>Terjemahan:</strong>
-        <div id="translationText"></div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+          <span>Is this service free to use?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Yes, all our conversion tools are completely free to use. You can convert as much text as you need without any charges or limitations.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+          <span>Can I use this on mobile devices?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Absolutely! Our website is fully responsive and works perfectly on all devices including smartphones, tablets, and desktop computers. The interface automatically adjusts to provide the best experience on your device.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFAQ(this)">
+          <span>How do I save my conversion history?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          Your conversion history is automatically saved in your browser's local storage. You can access it anytime from the History tab in the converter. You can also export your history as a JSON file for backup.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="contact">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Us</h3>
+        <p>We provide powerful text conversion tools to help you transform your text in creative ways. Our tools are designed to be simple, fast, and effective.</p>
+        <div class="social-links">
+          <a href="https://facebook.com" target="_blank" class="social-link">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="https://twitter.com" target="_blank" class="social-link">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="https://instagram.com" target="_blank" class="social-link">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://github.com" target="_blank" class="social-link">
+            <i class="fab fa-github"></i>
+          </a>
+          <a href="https://linkedin.com" target="_blank" class="social-link">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="text-number.html">Text to Number</a></li>
+          <li><a href="languageG.html">Language G</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3>Contact Info</h3>
+        <p><i class="fas fa-envelope"></i> info@textconverter.com</p>
+        <p><i class="fas fa-phone"></i> +62 812-3456-7890</p>
+        <p><i class="fas fa-map-marker-alt"></i> Jakarta, Indonesia</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Newsletter</h3>
+        <p>Subscribe to get updates on new features and tools</p>
+        <form onsubmit="subscribeNewsletter(event)" style="margin-top: 15px;">
+          <input type="email" placeholder="Your email" required style="padding: 10px; border-radius: 8px; border: none; width: 100%; margin-bottom: 10px;">
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Subscribe</button>
+        </form>
       </div>
     </div>
 
-    <div class="tab-content" id="reverse">
-      <div class="input-group">
-        <label for="reverseInput">Enter numbers:</label>
-        <input id="reverseInput" placeholder="Type numbers here..." oninput="reverseConvert()" />
-        <p style="font-size:12px;color:#666;margin-top:-5px;margin-bottom:8px;">Contoh: h3110, 53140747, 21611...</p>
-      </div>
-
-      <div class="input-group">
-        <label for="reverseOutput">Result:</label>
-        <div class="result-container">
-          <textarea id="reverseOutput" rows="4" readonly></textarea>
-          <div class="char-count" id="reverseCharCount">0 characters</div>
-        </div>
-        <div class="button-group">
-          <button id="reverseCopyBtn" class="copy-btn hidden" onclick="copyReverseResult()">
-            <i class="fas fa-copy"></i> Copy
-          </button>
-          <button id="reverseClearBtn" class="clear-btn hidden" onclick="clearReverseText()">
-            <i class="fas fa-trash"></i> Clear
-          </button>
-        </div>
-      </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 Text Converter. All rights reserved. Made with <i class="fas fa-heart" style="color: var(--danger-color);"></i> in Indonesia</p>
     </div>
+  </footer>
 
-    <div class="tab-content" id="history">
-      <div class="button-group">
-        <button id="clearHistoryBtn" class="clear-btn" onclick="clearHistory()">
-          <i class="fas fa-trash"></i> Clear History
-        </button>
-        <button id="exportHistoryBtn" class="secondary-btn" onclick="exportHistory()">
-          <i class="fas fa-download"></i> Export
-        </button>
-      </div>
-      <div class="history-container" id="historyContainer">
-        <!-- History items will be added here -->
-      </div>
-    </div>
-
-    <div class="tab-content" id="templates">
-      <div class="input-group">
-        <label>Quick Templates:</label>
-        <div class="template-container" id="templateContainer">
-          <div class="template-item" onclick="useTemplate('hello')">
-            hello <i class="fas fa-arrow-right"></i> h3110
-          </div>
-          <div class="template-item" onclick="useTemplate('selamat')">
-            selamat <i class="fas fa-arrow-right"></i> 53140747
-          </div>
-          <div class="template-item" onclick="useTemplate('zeli')">
-            zeli <i class="fas fa-arrow-right"></i> 21611
-          </div>
-        </div>
-      </div>
-      <div class="input-group">
-        <label>Add New Template:</label>
-        <div class="custom-mapping-row">
-          <input type="text" id="newTemplateText" class="custom-mapping-input" placeholder="Text">
-          <button class="add-mapping-btn" onclick="addTemplate()">
-            <i class="fas fa-plus"></i> Add
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-content" id="stats">
-      <div class="stats-container">
-        <div class="stat-card">
-          <div class="stat-value" id="totalConversions">0</div>
-          <div class="stat-label">Total Conversions</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="totalCharacters">0</div>
-          <div class="stat-label">Total Characters</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="mostUsedChar">-</div>
-          <div class="stat-label">Most Used Character</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="favoriteMode">Standard</div>
-          <div class="stat-label">Favorite Mode</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-content" id="settings">
-      <div class="input-group">
-        <label>Custom Mapping:</label>
-        <div class="custom-mapping-container" id="customMappingContainer">
-          <!-- Custom mapping rows will be added here -->
-        </div>
-        <button class="add-mapping-btn" onclick="addCustomMapping()">
-          <i class="fas fa-plus"></i> Add Mapping
-        </button>
-      </div>
-      <div class="input-group">
-        <label>Batch Conversion:</label>
-        <div class="batch-container" id="batchContainer">
-          <!-- Batch items will be added here -->
-        </div>
-        <button class="add-batch-btn" onclick="addBatchItem()">
-          <i class="fas fa-plus"></i> Add Item
-        </button>
-        <button class="primary-btn" onclick="processBatch()" style="margin-top: 8px;">
-          <i class="fas fa-play"></i> Process Batch
-        </button>
-      </div>
-      <div class="input-group">
-        <label>Clipboard Monitor:</label>
-        <div class="button-group">
-          <button id="clipboardToggle" class="secondary-btn" onclick="toggleClipboardMonitor()">
-            <i class="fas fa-clipboard"></i> Enable
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="info-section">
-      <div class="info-title">Mapping (A-Z → Angka):</div>
-      <div id="mappingInfo">
-        A→4, B→8, C→01, D→02, E→3, F→03, G→6, H→04, I→1, L→1, O→0, S→5, T→7, Z→2<br>
-        Huruf lain memakai angka unik 2 digit.
-      </div>
-      <div class="info-title" style="margin-top: 12px;">Contoh:</div>
-      <div>
-        hello → h3110<br>
-        selamat → 53140747<br>
-        zeli → 21611
-      </div>
-    </div>
-  </div>
-
+  <!-- Notification -->
   <div id="notification" class="notification">
     <i class="fas fa-check-circle"></i>
     <span id="notificationText">Success!</span>
   </div>
 
-  <!-- Presentation Mode -->
-  <div class="presentation-mode" id="presentationMode">
-    <button class="presentation-close" onclick="closePresentationMode()">
-      <i class="fas fa-times"></i>
-    </button>
-    <div class="presentation-content">
-      <div class="presentation-output" id="presentationOutput"></div>
-      <div class="presentation-input" id="presentationInput"></div>
-    </div>
-  </div>
-
-  <!-- Clipboard Monitor -->
-  <div class="clipboard-monitor" id="clipboardMonitor" onclick="convertClipboard()">
-    <i class="fas fa-clipboard"></i> Convert Clipboard
-  </div>
-
   <script>
-    // Standard mapping
-    const standardMap = {
-      a: "4",  b: "8",  c: "01", d: "02", e: "3",  f: "03",
-      g: "6",  h: "04", i: "1",  j: "05", k: "06", l: "1",
-      m: "07", n: "08", o: "0",  p: "09", q: "10", r: "11",
-      s: "5",  t: "7",  u: "12", v: "13", w: "14", x: "15",
-      y: "16", z: "2"
-    };
-
-    // Advanced mapping (more leet speak variations)
-    const advancedMap = {
-      a: "4",  b: "8",  c: "(", d: "|)", e: "3",  f: "ph",
-      g: "6",  h: "#", i: "1",  j: "7", k: "|<", l: "1",
-      m: "/\\/\\", n: "|\\|", o: "0", p: "|D", q: "(_,)", r: "|2",
-      s: "5",  t: "7",  u: "(_)", v: "\\/", w: "\\/\\/", x: "><",
-      y: "`/", z: "2"
-    };
-
-    // Minimal mapping (only most common leet replacements)
-    const minimalMap = {
-      a: "4", e: "3", i: "1", o: "0", s: "5", t: "7", z: "2"
-    };
-
-    // Custom mapping (user-defined)
-    let customMap = JSON.parse(localStorage.getItem('customMap')) || {};
-
-    // Templates
-    let templates = JSON.parse(localStorage.getItem('templates')) || [
-      { text: "hello", result: "h3110" },
-      { text: "selamat", result: "53140747" },
-      { text: "zeli", result: "21611" }
-    ];
-
-    // Statistics
-    let stats = JSON.parse(localStorage.getItem('stats')) || {
-      totalConversions: 0,
-      totalCharacters: 0,
-      characterUsage: {},
-      modeUsage: { standard: 0, advanced: 0, minimal: 0, custom: 0 }
-    };
-
-    // Reverse mapping for standard mode
-    const reverseMap = {};
-    for (const key in standardMap) {
-      reverseMap[standardMap[key]] = key;
-    }
-
-    // Current mode
-    let currentMode = 'standard';
-    let conversionHistory = JSON.parse(localStorage.getItem('conversionHistory')) || [];
-    let clipboardMonitorActive = false;
-    let lastClipboardContent = "";
-
-    // Initialize
+    // Theme Toggle
     document.addEventListener('DOMContentLoaded', function() {
-      // Show intro screen
-      const introOverlay = document.getElementById('introOverlay');
-      
-      // Hide intro after 2.5 seconds
-      setTimeout(() => {
-        introOverlay.style.opacity = '0';
-        setTimeout(() => {
-          introOverlay.style.display = 'none';
-        }, 500);
-      }, 2500);
-      
       // Check for saved theme preference
       if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-mode');
         document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
       }
 
-      // Load history
-      loadHistory();
-      
-      // Load templates
-      loadTemplates();
-      
-      // Load stats
-      updateStats();
-      
-      // Load custom mapping
-      loadCustomMapping();
-      
-      // Initialize batch container with one item
-      addBatchItem();
-
-      // Set up event listeners
-      document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-          
-          this.classList.add('active');
-          document.getElementById(this.dataset.tab).classList.add('active');
-        });
-      });
-
-      document.querySelectorAll('.mode-option').forEach(option => {
-        option.addEventListener('click', function() {
-          document.querySelectorAll('.mode-option').forEach(o => o.classList.remove('active'));
-          this.classList.add('active');
-          currentMode = this.dataset.mode;
-          convert(); // Re-convert with new mode
-        });
-      });
-
+      // Theme toggle functionality
       document.getElementById('themeToggle').addEventListener('click', function() {
         document.body.classList.toggle('dark-mode');
         const isDark = document.body.classList.contains('dark-mode');
         this.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
       });
-      
-      // Close share options when clicking outside
-      document.addEventListener('click', function(e) {
-        const shareOptions = document.getElementById('shareOptions');
-        const shareBtn = document.getElementById('shareBtn');
-        
-        if (!shareOptions.contains(e.target) && e.target !== shareBtn) {
-          shareOptions.classList.remove('show');
-        }
+
+      // Mobile menu toggle
+      document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+        document.getElementById('navLinks').classList.toggle('active');
+      });
+
+      // Close mobile menu when clicking on a link
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', function() {
+          document.getElementById('navLinks').classList.remove('active');
+        });
+      });
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
       });
     });
 
-    function getMap() {
-      switch (currentMode) {
-        case 'advanced':
-          return advancedMap;
-        case 'minimal':
-          return minimalMap;
-        case 'custom':
-          return { ...standardMap, ...customMap };
-        default:
-          return standardMap;
-      }
+    // FAQ Toggle
+    function toggleFAQ(element) {
+      const answer = element.nextElementSibling;
+      const allQuestions = document.querySelectorAll('.faq-question');
+      const allAnswers = document.querySelectorAll('.faq-answer');
+      
+      // Close all other FAQs
+      allQuestions.forEach(q => {
+        if (q !== element) {
+          q.classList.remove('active');
+        }
+      });
+      
+      allAnswers.forEach(a => {
+        if (a !== answer) {
+          a.classList.remove('active');
+        }
+      });
+      
+      // Toggle current FAQ
+      element.classList.toggle('active');
+      answer.classList.toggle('active');
     }
 
-    function convert() {
-      const text = document.getElementById("inputText").value.toLowerCase();
-      let result = "";
-      let mappingBreakdown = [];
-      const map = getMap();
-      
-      for (const c of text) {
-        const mappedValue = map[c] ?? c;
-        result += mappedValue;
-        
-        // Add to mapping breakdown
-        if (map[c]) {
-          mappingBreakdown.push(`${c} > ${mappedValue}`);
-        } else {
-          mappingBreakdown.push(`${c} > ${c}`);
-        }
-      }
-      
-      document.getElementById("output").value = result;
-      document.getElementById("charCount").textContent = `${result.length} characters`;
-      
-      // Show/hide elements based on whether there's input
-      if (text) {
-        document.getElementById("copyBtn").classList.remove("hidden");
-        document.getElementById("shareBtn").classList.remove("hidden");
-        document.getElementById("presentBtn").classList.remove("hidden");
-        document.getElementById("clearBtn").classList.remove("hidden");
-        document.getElementById("mappingBreakdown").classList.remove("hidden");
-        document.getElementById("translation").classList.remove("hidden");
-        
-        // Display mapping breakdown
-        document.getElementById("mappingBreakdown").innerHTML = 
-          "<strong>Rincian Konversi:</strong><br>" + mappingBreakdown.join(", ");
-        
-        // Display translation (original text)
-        document.getElementById("translationText").textContent = text;
-        
-        // Add to history
-        addToHistory(text, result);
-        
-        // Update stats
-        updateConversionStats(text, result);
-      } else {
-        document.getElementById("copyBtn").classList.add("hidden");
-        document.getElementById("shareBtn").classList.add("hidden");
-        document.getElementById("presentBtn").classList.add("hidden");
-        document.getElementById("clearBtn").classList.add("hidden");
-        document.getElementById("mappingBreakdown").classList.add("hidden");
-        document.getElementById("translation").classList.add("hidden");
-      }
-    }
-    
-    function reverseConvert() {
-      const text = document.getElementById("reverseInput").value.toLowerCase();
-      let result = "";
-      let i = 0;
-      
-      while (i < text.length) {
-        let found = false;
-        
-        // Try to match the longest possible mapping first
-        for (let len = 3; len >= 1; len--) {
-          if (i + len <= text.length) {
-            const substr = text.substring(i, i + len);
-            if (reverseMap[substr]) {
-              result += reverseMap[substr];
-              i += len;
-              found = true;
-              break;
-            }
-          }
-        }
-        
-        if (!found) {
-          result += text[i];
-          i++;
-        }
-      }
-      
-      document.getElementById("reverseOutput").value = result;
-      document.getElementById("reverseCharCount").textContent = `${result.length} characters`;
-      
-      // Show/hide elements based on whether there's input
-      if (text) {
-        document.getElementById("reverseCopyBtn").classList.remove("hidden");
-        document.getElementById("reverseClearBtn").classList.remove("hidden");
-      } else {
-        document.getElementById("reverseCopyBtn").classList.add("hidden");
-        document.getElementById("reverseClearBtn").classList.add("hidden");
-      }
-    }
-    
-    function copyResult() {
-      const output = document.getElementById("output");
-      output.select();
-      document.execCommand("copy");
+    // Newsletter Subscription
+    function subscribeNewsletter(event) {
+      event.preventDefault();
+      const email = event.target.querySelector('input[type="email"]').value;
       
       // Show notification
-      showNotification("Copied to clipboard!");
-    }
-    
-    function copyReverseResult() {
-      const output = document.getElementById("reverseOutput");
-      output.select();
-      document.execCommand("copy");
+      showNotification(`Successfully subscribed with ${email}!`);
       
-      // Show notification
-      showNotification("Copied to clipboard!");
+      // Clear form
+      event.target.reset();
     }
-    
-    function clearText() {
-      document.getElementById("inputText").value = "";
-      document.getElementById("output").value = "";
-      document.getElementById("charCount").textContent = "0 characters";
-      document.getElementById("copyBtn").classList.add("hidden");
-      document.getElementById("shareBtn").classList.add("hidden");
-      document.getElementById("presentBtn").classList.add("hidden");
-      document.getElementById("clearBtn").classList.add("hidden");
-      document.getElementById("mappingBreakdown").classList.add("hidden");
-      document.getElementById("translation").classList.add("hidden");
-    }
-    
-    function clearReverseText() {
-      document.getElementById("reverseInput").value = "";
-      document.getElementById("reverseOutput").value = "";
-      document.getElementById("reverseCharCount").textContent = "0 characters";
-      document.getElementById("reverseCopyBtn").classList.add("hidden");
-      document.getElementById("reverseClearBtn").classList.add("hidden");
-    }
-    
+
+    // Show Notification
     function showNotification(message) {
-      const notification = document.getElementById("notification");
-      document.getElementById("notificationText").textContent = message;
-      notification.classList.add("show");
+      const notification = document.getElementById('notification');
+      document.getElementById('notificationText').textContent = message;
+      notification.classList.add('show');
       
       // Hide notification after 3 seconds
       setTimeout(() => {
-        notification.classList.remove("show");
+        notification.classList.remove('show');
       }, 3000);
     }
-    
-    function addToHistory(original, converted) {
-      // Check if this conversion already exists in history
-      const exists = conversionHistory.some(item => 
-        item.original === original && item.converted === converted
-      );
-      
-      if (!exists) {
-        conversionHistory.unshift({
-          original,
-          converted,
-          timestamp: new Date().toISOString()
-        });
-        
-        // Keep only the last 20 items
-        if (conversionHistory.length > 20) {
-          conversionHistory = conversionHistory.slice(0, 20);
+
+    // Add scroll effect to header
+    window.addEventListener('scroll', function() {
+      const header = document.querySelector('header');
+      if (window.scrollY > 100) {
+        header.style.background = 'rgba(255, 255, 255, 0.98)';
+        if (document.body.classList.contains('dark-mode')) {
+          header.style.background = 'rgba(30, 30, 46, 0.98)';
         }
-        
-        // Save to localStorage
-        localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
-        
-        // Update history display
-        loadHistory();
-      }
-    }
-    
-    function loadHistory() {
-      const historyContainer = document.getElementById('historyContainer');
-      
-      if (conversionHistory.length === 0) {
-        historyContainer.innerHTML = '<p style="text-align:center; color:#666;">No history yet</p>';
-        return;
-      }
-      
-      historyContainer.innerHTML = '';
-      
-      conversionHistory.forEach((item, index) => {
-        const historyItem = document.createElement('div');
-        historyItem.className = 'history-item';
-        
-        const date = new Date(item.timestamp);
-        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-        
-        historyItem.innerHTML = `
-          <div class="history-text">${item.original}</div>
-          <div class="history-result">${item.converted}</div>
-          <button class="delete-history" onclick="deleteHistoryItem(${index})" title="Delete">
-            <i class="fas fa-times"></i>
-          </button>
-        `;
-        
-        historyItem.addEventListener('click', function(e) {
-          if (!e.target.closest('.delete-history')) {
-            document.getElementById('inputText').value = item.original;
-            document.getElementById('output').value = item.converted;
-            document.getElementById('charCount').textContent = `${item.converted.length} characters`;
-            document.getElementById('copyBtn').classList.remove('hidden');
-            document.getElementById('shareBtn').classList.remove('hidden');
-            document.getElementById('presentBtn').classList.remove('hidden');
-            document.getElementById('clearBtn').classList.remove('hidden');
-            document.getElementById('mappingBreakdown').classList.remove('hidden');
-            document.getElementById('translation').classList.remove('hidden');
-            document.getElementById('translationText').textContent = item.original;
-            
-            // Switch to converter tab
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelector('[data-tab="converter"]').classList.add('active');
-            document.getElementById('converter').classList.add('active');
-          }
-        });
-        
-        historyContainer.appendChild(historyItem);
-      });
-    }
-    
-    function deleteHistoryItem(index) {
-      conversionHistory.splice(index, 1);
-      localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
-      loadHistory();
-      showNotification("History item deleted");
-    }
-    
-    function clearHistory() {
-      if (confirm('Are you sure you want to clear all history?')) {
-        conversionHistory = [];
-        localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
-        loadHistory();
-        showNotification("History cleared");
-      }
-    }
-    
-    function exportHistory() {
-      const dataStr = JSON.stringify(conversionHistory, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      
-      const exportFileDefaultName = `text-to-number-history-${new Date().toISOString().slice(0,10)}.json`;
-      
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-      
-      showNotification("History exported!");
-    }
-    
-    function toggleShareOptions() {
-      const shareOptions = document.getElementById('shareOptions');
-      shareOptions.classList.toggle('show');
-    }
-    
-    function shareToSocial(platform) {
-      const text = document.getElementById('inputText').value;
-      const result = document.getElementById('output').value;
-      const shareText = `"${text}" → "${result}"`;
-      
-      let url = '';
-      
-      switch(platform) {
-        case 'twitter':
-          url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
-          break;
-        case 'facebook':
-          url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(shareText)}`;
-          break;
-        case 'whatsapp':
-          url = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-          break;
-      }
-      
-      if (url) {
-        window.open(url, '_blank');
-      }
-      
-      // Hide share options
-      document.getElementById('shareOptions').classList.remove('show');
-    }
-    
-    function downloadAsFile() {
-      const text = document.getElementById('inputText').value;
-      const result = document.getElementById('output').value;
-      const content = `Original: ${text}\nConverted: ${result}`;
-      
-      const dataUri = 'data:text/plain;charset=utf-8,'+ encodeURIComponent(content);
-      
-      const exportFileDefaultName = `text-to-number-${new Date().toISOString().slice(0,10)}.txt`;
-      
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-      
-      // Hide share options
-      document.getElementById('shareOptions').classList.remove('show');
-      
-      showNotification("File downloaded!");
-    }
-    
-    function openPresentationMode() {
-      const text = document.getElementById('inputText').value;
-      const result = document.getElementById('output').value;
-      
-      document.getElementById('presentationOutput').textContent = result;
-      document.getElementById('presentationInput').textContent = text;
-      document.getElementById('presentationMode').classList.add('active');
-    }
-    
-    function closePresentationMode() {
-      document.getElementById('presentationMode').classList.remove('active');
-    }
-    
-    function loadTemplates() {
-      const templateContainer = document.getElementById('templateContainer');
-      templateContainer.innerHTML = '';
-      
-      templates.forEach((template, index) => {
-        const templateItem = document.createElement('div');
-        templateItem.className = 'template-item';
-        templateItem.innerHTML = `
-          ${template.text} <i class="fas fa-arrow-right"></i> ${template.result}
-          <i class="fas fa-times" onclick="removeTemplate(${index})" style="margin-left:5px;"></i>
-        `;
-        templateItem.onclick = function(e) {
-          if (!e.target.classList.contains('fa-times')) {
-            useTemplate(template.text);
-          }
-        };
-        templateContainer.appendChild(templateItem);
-      });
-    }
-    
-    function useTemplate(text) {
-      document.getElementById('inputText').value = text;
-      convert();
-      
-      // Switch to converter tab
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelector('[data-tab="converter"]').classList.add('active');
-      document.getElementById('converter').classList.add('active');
-    }
-    
-    function addTemplate() {
-      const text = document.getElementById('newTemplateText').value.trim();
-      if (!text) return;
-      
-      // Convert the text using current mode
-      const map = getMap();
-      let result = "";
-      for (const c of text.toLowerCase()) {
-        result += map[c] ?? c;
-      }
-      
-      templates.push({ text, result });
-      localStorage.setItem('templates', JSON.stringify(templates));
-      
-      document.getElementById('newTemplateText').value = '';
-      loadTemplates();
-      
-      showNotification("Template added!");
-    }
-    
-    function removeTemplate(index) {
-      templates.splice(index, 1);
-      localStorage.setItem('templates', JSON.stringify(templates));
-      loadTemplates();
-      showNotification("Template removed!");
-    }
-    
-    function updateConversionStats(text, result) {
-      stats.totalConversions++;
-      stats.totalCharacters += text.length;
-      stats.modeUsage[currentMode]++;
-      
-      // Update character usage
-      for (const char of text.toLowerCase()) {
-        if (!stats.characterUsage[char]) {
-          stats.characterUsage[char] = 0;
-        }
-        stats.characterUsage[char]++;
-      }
-      
-      // Save stats
-      localStorage.setItem('stats', JSON.stringify(stats));
-      
-      // Update display
-      updateStats();
-    }
-    
-    function updateStats() {
-      document.getElementById('totalConversions').textContent = stats.totalConversions;
-      document.getElementById('totalCharacters').textContent = stats.totalCharacters;
-      
-      // Find most used character
-      let mostUsedChar = '-';
-      let maxUsage = 0;
-      for (const char in stats.characterUsage) {
-        if (stats.characterUsage[char] > maxUsage) {
-          maxUsage = stats.characterUsage[char];
-          mostUsedChar = char;
-        }
-      }
-      document.getElementById('mostUsedChar').textContent = mostUsedChar;
-      
-      // Find favorite mode
-      let favoriteMode = 'Standard';
-      let maxModeUsage = 0;
-      for (const mode in stats.modeUsage) {
-        if (stats.modeUsage[mode] > maxModeUsage) {
-          maxModeUsage = stats.modeUsage[mode];
-          favoriteMode = mode.charAt(0).toUpperCase() + mode.slice(1);
-        }
-      }
-      document.getElementById('favoriteMode').textContent = favoriteMode;
-    }
-    
-    function loadCustomMapping() {
-      const container = document.getElementById('customMappingContainer');
-      container.innerHTML = '';
-      
-      for (const key in customMap) {
-        addCustomMappingRow(key, customMap[key]);
-      }
-      
-      // Add at least one empty row if there are no custom mappings
-      if (Object.keys(customMap).length === 0) {
-        addCustomMappingRow();
-      }
-    }
-    
-    function addCustomMappingRow(key = '', value = '') {
-      const container = document.getElementById('customMappingContainer');
-      const row = document.createElement('div');
-      row.className = 'custom-mapping-row';
-      row.innerHTML = `
-        <input type="text" class="custom-mapping-input" placeholder="Character" value="${key}">
-        <input type="text" class="custom-mapping-input" placeholder="Mapping" value="${value}">
-        <button class="remove-mapping-btn" onclick="this.parentElement.remove(); saveCustomMapping();">
-          <i class="fas fa-times"></i>
-        </button>
-      `;
-      container.appendChild(row);
-    }
-    
-    function addCustomMapping() {
-      addCustomMappingRow();
-    }
-    
-    function saveCustomMapping() {
-      const rows = document.querySelectorAll('#customMappingContainer .custom-mapping-row');
-      customMap = {};
-      
-      rows.forEach(row => {
-        const inputs = row.querySelectorAll('input');
-        const key = inputs[0].value.trim().toLowerCase();
-        const value = inputs[1].value.trim();
-        
-        if (key && value) {
-          customMap[key] = value;
-        }
-      });
-      
-      localStorage.setItem('customMap', JSON.stringify(customMap));
-      
-      // If in custom mode, re-convert
-      if (currentMode === 'custom') {
-        convert();
-      }
-      
-      showNotification("Custom mapping saved!");
-    }
-    
-    function addBatchItem() {
-      const container = document.getElementById('batchContainer');
-      const item = document.createElement('div');
-      item.className = 'batch-item';
-      item.innerHTML = `
-        <input type="text" class="batch-input" placeholder="Text to convert">
-        <div class="batch-result">Result will appear here</div>
-        <button class="remove-batch-btn" onclick="this.parentElement.remove();">
-          <i class="fas fa-times"></i>
-        </button>
-      `;
-      container.appendChild(item);
-    }
-    
-    function processBatch() {
-      const items = document.querySelectorAll('#batchContainer .batch-item');
-      const map = getMap();
-      
-      items.forEach(item => {
-        const input = item.querySelector('.batch-input');
-        const result = item.querySelector('.batch-result');
-        
-        if (input.value.trim()) {
-          let converted = "";
-          for (const c of input.value.toLowerCase()) {
-            converted += map[c] ?? c;
-          }
-          result.textContent = converted;
-          
-          // Add to history
-          addToHistory(input.value, converted);
-          
-          // Update stats
-          updateConversionStats(input.value, converted);
-        }
-      });
-      
-      showNotification("Batch processed!");
-    }
-    
-    function toggleClipboardMonitor() {
-      clipboardMonitorActive = !clipboardMonitorActive;
-      const btn = document.getElementById('clipboardToggle');
-      const monitor = document.getElementById('clipboardMonitor');
-      
-      if (clipboardMonitorActive) {
-        btn.innerHTML = '<i class="fas fa-clipboard"></i> Disable';
-        btn.classList.remove('secondary-btn');
-        btn.classList.add('clear-btn');
-        monitor.classList.add('active');
-        
-        // Store current clipboard content
-        navigator.clipboard.readText().then(text => {
-          lastClipboardContent = text;
-        }).catch(err => {
-          console.error('Failed to read clipboard contents: ', err);
-        });
-        
-        // Start monitoring clipboard
-        monitorClipboard();
-        
-        showNotification("Clipboard monitor enabled!");
       } else {
-        btn.innerHTML = '<i class="fas fa-clipboard"></i> Enable';
-        btn.classList.remove('clear-btn');
-        btn.classList.add('secondary-btn');
-        monitor.classList.remove('active');
-        
-        showNotification("Clipboard monitor disabled!");
-      }
-    }
-    
-    function monitorClipboard() {
-      if (!clipboardMonitorActive) return;
-      
-      navigator.clipboard.readText().then(text => {
-        if (text !== lastClipboardContent && text.trim()) {
-          lastClipboardContent = text;
-          // Show notification that clipboard has changed
-          const monitor = document.getElementById('clipboardMonitor');
-          monitor.style.animation = 'none';
-          setTimeout(() => {
-            monitor.style.animation = 'pulse 1s infinite';
-          }, 10);
+        header.style.background = 'rgba(255, 255, 255, 0.95)';
+        if (document.body.classList.contains('dark-mode')) {
+          header.style.background = 'rgba(30, 30, 46, 0.95)';
         }
-      }).catch(err => {
-        console.error('Failed to read clipboard contents: ', err);
-      });
-      
-      // Check again after 1 second
-      setTimeout(monitorClipboard, 1000);
-    }
-    
-    function convertClipboard() {
-      if (!lastClipboardContent.trim()) return;
-      
-      document.getElementById('inputText').value = lastClipboardContent;
-      convert();
-      
-      // Switch to converter tab
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelector('[data-tab="converter"]').classList.add('active');
-      document.getElementById('converter').classList.add('active');
-      
-      // Reset animation
-      const monitor = document.getElementById('clipboardMonitor');
-      monitor.style.animation = 'none';
-    }
-    
-    // Add pulse animation for clipboard monitor
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
       }
-    `;
-    document.head.appendChild(style);
+    });
+
+    // Add animation on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements for animation
+    document.addEventListener('DOMContentLoaded', function() {
+      const elementsToAnimate = document.querySelectorAll('.card, .faq-item');
+      elementsToAnimate.forEach(el => {
+        observer.observe(el);
+      });
+    });
   </script>
 </body>
 </html>
