@@ -1,255 +1,30 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dry Text — Text Dryer</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-  :root{
-    --bg1: #0f172a; --card:#0b1220; --accent:#06b6d4; --muted:#94a3b8; --glass: rgba(255,255,255,0.03);
-    --radius:12px;
-  }
-  body{
-    font-family: Inter, system-ui, Arial;
-    background: linear-gradient(180deg,#0b1220 0%, #071024 100%);
-    color:#e6eef8;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-  }
-  .wrap{
-    width:100%;
-    max-width:760px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:var(--radius);
-    padding:20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-    border:1px solid rgba(255,255,255,0.03);
-  }
-  h1{margin:0 0 6px 0; font-size:20px; color:#fff}
-  p.lead{margin:0 0 14px 0; color:var(--muted); font-size:13px}
-  .row{display:flex; gap:12px;}
-  .col{flex:1; min-width:0}
-  label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px}
-  input[type="text"], textarea, select {
-    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04);
-    background: rgba(255,255,255,0.02); color:#e6eef8; font-size:14px;
-  }
-  textarea{min-height:120px; resize:vertical}
-  .controls{display:flex; gap:8px; margin-top:10px; align-items:center;}
-  button{
-    background:var(--accent); color:#022; padding:8px 12px; border-radius:10px; border:none; cursor:pointer;
-    font-weight:600; display:inline-flex; gap:8px; align-items:center;
-  }
-  button.ghost{background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted)}
-  .small{font-size:13px; padding:6px 8px}
-  .modes{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
-  .mode{padding:8px 10px; border-radius:10px; background:rgba(255,255,255,0.02); cursor:pointer; color:var(--muted); border:1px solid transparent}
-  .mode.active{background:var(--accent); color:#021; font-weight:700; border-color:rgba(255,255,255,0.06)}
-  .info{margin-top:12px; background:rgba(255,255,255,0.02); padding:10px; border-radius:10px; color:var(--muted); font-size:13px}
-  .examples{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap}
-  .chip{background:rgba(0,0,0,0.25); padding:6px 8px; border-radius:8px; cursor:pointer; color:#dbeafe; font-size:13px}
-  .result-box{margin-top:12px; display:flex; gap:8px; align-items:flex-start}
-  .result-left{flex:1}
-  .result-meta{font-size:12px; color:var(--muted); margin-top:6px}
-  footer{margin-top:14px; font-size:12px; color:var(--muted); text-align:center}
-  @media (max-width:640px){ .row{flex-direction:column} .modes{gap:6px} }
-</style>
+  <meta charset="UTF-8">
+  <title>Dry Text Simple</title>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Dry Text — Text Dryer</h1>
-    <p class="lead">Keringkan teks kamu: buang vokal / lakukan transformasi ringkas. Pilih mode, ketik teks, dan hasil akan otomatis muncul.</p>
 
-    <div class="row">
-      <div class="col">
-        <label for="inputText">Masukkan teks</label>
-        <input id="inputText" type="text" placeholder="Contoh: halo aku makan nasi" oninput="runDry()" />
-        <div class="examples">
-          <div class="chip" onclick="useExample('hello world')">hello world</div>
-          <div class="chip" onclick="useExample('aku makan nasi')">aku makan nasi</div>
-          <div class="chip" onclick="useExample('programming is fun')">programming is fun</div>
-          <div class="chip" onclick="useExample('zeli goblok')">zeli goblok</div>
-        </div>
+  <h2>Dry Text (Simple)</h2>
 
-        <div class="modes" id="modes">
-          <div class="mode active" data-mode="ultra" onclick="setMode('ultra')">Ultra Dry</div>
-          <div class="mode" data-mode="crispy" onclick="setMode('crispy')">Crispy Dry</div>
-          <div class="mode" data-mode="numbers" onclick="setMode('numbers')">Dry → Numbers</div>
-          <div class="mode" data-mode="desert" onclick="setMode('desert')">Desert (no spaces)</div>
-          <div class="mode" data-mode="salted" onclick="setMode('salted')">Salted Dry</div>
-        </div>
+  <label>Type here:</label><br>
+  <input id="inputText" type="text" oninput="runDry()"><br><br>
 
-        <div class="controls">
-          <button onclick="copyResult()"><i class="fas fa-copy"></i> Copy</button>
-          <button class="ghost" onclick="clearAll()"><i class="fas fa-trash"></i> Clear</button>
-          <div style="flex:1"></div>
-          <div style="color:var(--muted); font-size:13px">Mode aktif: <strong id="activeModeLabel">Ultra Dry</strong></div>
-        </div>
+  <label>Result:</label><br>
+  <textarea id="output" rows="4" cols="40" readonly></textarea>
 
-      </div>
-
-      <div class="col">
-        <label>Hasil Dry Text</label>
-        <textarea id="output" readonly placeholder="Hasil akan muncul di sini"></textarea>
-        <div class="result-meta" id="meta">0 characters</div>
-
-        <div class="result-box">
-          <div class="result-left">
-            <div class="info"><strong>Penjelasan singkat:</strong><br>
-              <ul style="margin:6px 0 0 18px;padding:0;color:inherit">
-                <li><strong>Ultra Dry:</strong> hapus semua vokal (a/e/i/o/u), gabungkan kata, hilangkan double huruf.</li>
-                <li><strong>Crispy Dry:</strong> hapus vokal kecuali vokal pertama di setiap kata.</li>
-                <li><strong>Dry → Numbers:</strong> hapus vokal lalu ubah huruf ke angka (A→4, E→3, I/L→1, O→0, S→5, Z→2; huruf lainnya ke 2-digit).</li>
-                <li><strong>Desert:</strong> buang vokal dan spasi (semua menyatu).</li>
-                <li><strong>Salted:</strong> Dry + tambahkan tanda (~) di akhir setiap kata untuk 'rasa'.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <footer>Dry Text by Zeli — kalau mau, aku bisa tambahin opsi undo / reverse dry</footer>
-  </div>
-
-<script>
-  // mapping for Dry -> Numbers mode (re-use standard mapping idea)
-  const numberMap = {
-    a:'4', b:'8', c:'01', d:'02', e:'3', f:'03', g:'6', h:'04', i:'1', j:'05',
-    k:'06', l:'1', m:'07', n:'08', o:'0', p:'09', q:'10', r:'11', s:'5', t:'7',
-    u:'12', v:'13', w:'14', x:'15', y:'16', z:'2'
-  };
-
-  // state
-  let activeMode = 'ultra';
-
-  function setMode(mode){
-    activeMode = mode;
-    document.querySelectorAll('.mode').forEach(el => el.classList.remove('active'));
-    const el = document.querySelector(`.mode[data-mode="${mode}"]`);
-    if(el) el.classList.add('active');
-    document.getElementById('activeModeLabel').textContent = el ? el.textContent : mode;
-    runDry();
-  }
-
-  // helpers
-  function isVowel(ch){ return 'aeiou'.includes(ch); }
-  function removeVowelsAll(s){
-    return s.replace(/[aeiou]/gi,'');
-  }
-  function removeDuplicateLetters(s){
-    // remove consecutive duplicate letters
-    return s.replace(/([a-zA-Z])\1+/g, '$1');
-  }
-
-  // Dry algorithms
-  function ultraDry(text){
-    // lowercase, remove vowels, remove duplicates, trim spaces
-    let words = text.toLowerCase().split(/\s+/).filter(Boolean);
-    let out = words.map(w => removeDuplicateLetters(w.replace(/[aeiou]/g,'')));
-    return out.join(' ');
-  }
-
-  function crispyDry(text){
-    // keep first vowel of each word, remove other vowels
-    let words = text.toLowerCase().split(/\s+/).filter(Boolean);
-    let out = words.map(w => {
-      let kept = false;
-      let res = '';
-      for(const ch of w){
-        if(isVowel(ch)){
-          if(!kept){
-            res += ch; kept = true;
-          } else {
-            // skip
-          }
-        } else res += ch;
-      }
-      return removeDuplicateLetters(res);
-    });
-    return out.join(' ');
-  }
-
-  function desertDry(text){
-    // remove vowels and spaces, keep letters only
-    let letters = text.toLowerCase().replace(/[^a-z0-9]/g,'');
-    return letters.replace(/[aeiou]/g,'');
-  }
-
-  function saltedDry(text){
-    // dry per word (remove vowels) then add ~ at end of each word
-    let words = text.toLowerCase().split(/\s+/).filter(Boolean);
-    let out = words.map(w => {
-      let d = w.replace(/[aeiou]/g,'');
-      d = removeDuplicateLetters(d);
-      return d + '~';
-    });
-    return out.join(' ');
-  }
-
-  function numbersDry(text){
-    // remove vowels first, keep spaces, then map each letter to numberMap
-    let words = text.toLowerCase().split(/\s+/).filter(Boolean);
-    let outWords = words.map(w => {
-      let noV = w.replace(/[aeiou]/g,'');
-      let mapped = '';
-      for(const ch of noV){
-        if(/[a-z]/.test(ch)) mapped += (numberMap[ch] ?? ch);
-        else mapped += ch;
-      }
-      return mapped;
-    });
-    return outWords.join(' ');
-  }
-
-  // main runner
-  function runDry(){
-    const inp = document.getElementById('inputText').value || '';
-    let res = '';
-    if(!inp.trim()){
-      res = '';
-    } else {
-      switch(activeMode){
-        case 'ultra': res = ultraDry(inp); break;
-        case 'crispy': res = crispyDry(inp); break;
-        case 'numbers': res = numbersDry(inp); break;
-        case 'desert': res = desertDry(inp); break;
-        case 'salted': res = saltedDry(inp); break;
-        default: res = ultraDry(inp);
-      }
+  <script>
+    function removeVowels(text) {
+      return text.replace(/[aeiouAEIOU]/g, "");
     }
-    document.getElementById('output').value = res;
-    document.getElementById('meta').textContent = `${res.length} characters • ${res.split(/\s+/).filter(Boolean).length} word(s)`;
-  }
 
-  function clearAll(){
-    document.getElementById('inputText').value = '';
-    runDry();
-  }
+    function runDry() {
+      const input = document.getElementById("inputText").value;
+      const dry = removeVowels(input);
+      document.getElementById("output").value = dry;
+    }
+  </script>
 
-  function useExample(text){
-    document.getElementById('inputText').value = text;
-    runDry();
-  }
-
-  function copyResult(){
-    const out = document.getElementById('output');
-    if(!out.value) return;
-    out.select();
-    document.execCommand('copy');
-    // simple notification
-    const old = document.title;
-    document.title = 'Copied ✓';
-    setTimeout(()=> document.title = old, 900);
-  }
-
-  // init
-  document.addEventListener('DOMContentLoaded', ()=>{ runDry(); });
-</script>
 </body>
 </html>
