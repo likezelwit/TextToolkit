@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Long Text Converter</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #f72585;
+      --success-color: #06ffa5;
+      --warning-color: #ffbe0b;
+      --danger-color: #fb5607;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --gray-color: #6c757d;
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      transition: var(--transition);
+    }
+
+    body.dark-mode {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    body.dark-mode .container {
+      background: rgba(30, 30, 46, 0.95);
+      color: #f8f9fa;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    body.dark-mode h2 {
+      color: var(--success-color);
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--gray-color);
+      margin-top: -5px;
+      margin-bottom: 10px;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      font-size: 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      padding: 8px;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-toggle:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+      transform: rotate(15deg);
+    }
+
+    body.dark-mode .theme-toggle {
+      color: var(--warning-color);
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--dark-color);
+      font-size: 14px;
+    }
+
+    body.dark-mode label {
+      color: #f8f9fa;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: var(--border-radius);
+      border: 1px solid #ddd;
+      font-size: 15px;
+      transition: var(--transition);
+      background-color: #fff;
+      color: var(--dark-color);
+    }
+
+    body.dark-mode input, 
+    body.dark-mode textarea, 
+    body.dark-mode select {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #f8f9fa;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .primary-btn {
+      background: var(--primary-color);
+      color: white;
+      flex: 1;
+    }
+
+    .primary-btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .secondary-btn {
+      background: var(--light-color);
+      color: var(--dark-color);
+    }
+
+    .secondary-btn:hover {
+      background: #e9ecef;
+    }
+
+    body.dark-mode .secondary-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f8f9fa;
+    }
+
+    .copy-btn {
+      background: var(--success-color);
+      color: var(--dark-color);
+    }
+
+    .copy-btn:hover {
+      background: #00d084;
+    }
+
+    .clear-btn {
+      background: var(--danger-color);
+      color: white;
+    }
+
+    .clear-btn:hover {
+      background: #e63946;
+    }
+
+    .share-btn {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    .share-btn:hover {
+      background: #d70466;
+    }
+
+    .result-container {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    .char-count {
+      position: absolute;
+      bottom: -18px;
+      right: 0;
+      font-size: 11px;
+      color: var(--gray-color);
+    }
+
+    .mapping-breakdown {
+      background: var(--light-color);
+      padding: 12px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: var(--dark-color);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    body.dark-mode .mapping-breakdown {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f8f9fa;
+    }
+
+    .translation {
+      background: rgba(67, 97, 238, 0.1);
+      padding: 12px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      font-size: 13px;
+      color: var(--dark-color);
+      border-left: 4px solid var(--accent-color);
+    }
+
+    body.dark-mode .translation {
+      background: rgba(247, 37, 133, 0.1);
+      color: #f8f9fa;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--success-color);
+      color: var(--dark-color);
+      padding: 12px 18px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    body.dark-mode .tabs {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .tab {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--gray-color);
+      border-bottom: 2px solid transparent;
+      transition: var(--transition);
+      font-size: 14px;
+    }
+
+    .tab.active {
+      color: var(--primary-color);
+      border-bottom-color: var(--primary-color);
+    }
+
+    body.dark-mode .tab.active {
+      color: var(--success-color);
+      border-bottom-color: var(--success-color);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .history-container {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 12px;
+    }
+
+    .history-item {
+      padding: 10px;
+      border-radius: var(--border-radius);
+      margin-bottom: 8px;
+      background: var(--light-color);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    body.dark-mode .history-item {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .history-item:hover {
+      background: #e9ecef;
+      transform: translateX(5px);
+    }
+
+    body.dark-mode .history-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .history-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 14px;
+    }
+
+    .history-result {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-left: 8px;
+      font-size: 14px;
+    }
+
+    body.dark-mode .history-result {
+      color: var(--success-color);
+    }
+
+    .delete-history {
+      background: none;
+      border: none;
+      color: var(--danger-color);
+      cursor: pointer;
+      padding: 5px;
+      margin-left: 8px;
+    }
+
+    .info-section {
+      background: rgba(67, 97, 238, 0.05);
+      padding: 12px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      font-size: 13px;
+      color: var(--dark-color);
+    }
+
+    body.dark-mode .info-section {
+      background: rgba(255, 255, 255, 0.05);
+      color: #f8f9fa;
+    }
+
+    .info-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary-color);
+      font-size: 14px;
+    }
+
+    body.dark-mode .info-title {
+      color: var(--success-color);
+    }
+
+    .mode-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .mode-option {
+      flex: 1;
+      padding: 8px;
+      text-align: center;
+      border-radius: var(--border-radius);
+      background: var(--light-color);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 13px;
+    }
+
+    .mode-option.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    body.dark-mode .mode-option {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    body.dark-mode .mode-option.active {
+      background: var(--success-color);
+      color: var(--dark-color);
+    }
+
+    /* Intro Screen Styles */
+    .intro-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+
+    body.dark-mode .intro-overlay {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .intro-content {
+      text-align: center;
+      color: white;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      max-width: 80%;
+      animation: fadeInScale 0.8s ease;
+    }
+
+    .intro-title {
+      font-size: 28px;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .intro-subtitle {
+      font-size: 16px;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    .intro-icon {
+      font-size: 50px;
+      margin-bottom: 20px;
+      color: var(--success-color);
+    }
+
+    .intro-progress {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .intro-progress-bar {
+      height: 100%;
+      background: var(--success-color);
+      width: 0;
+      animation: progressAnimation 2s ease forwards;
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes progressAnimation {
+      to {
+        width: 100%;
+      }
+    }
+
+    /* New Styles for Additional Features */
+    .template-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .template-item {
+      padding: 6px 10px;
+      background: var(--light-color);
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    body.dark-mode .template-item {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .template-item:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .template-item i {
+      font-size: 10px;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .stat-card {
+      background: var(--light-color);
+      padding: 10px;
+      border-radius: var(--border-radius);
+      text-align: center;
+    }
+
+    body.dark-mode .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    body.dark-mode .stat-value {
+      color: var(--success-color);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--gray-color);
+      margin-top: 3px;
+    }
+
+    .share-options {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      padding: 10px;
+      z-index: 100;
+      display: none;
+    }
+
+    body.dark-mode .share-options {
+      background: var(--dark-color);
+    }
+
+    .share-options.show {
+      display: block;
+    }
+
+    .share-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .share-option:hover {
+      background: var(--light-color);
+    }
+
+    body.dark-mode .share-option:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .presentation-mode {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark-color);
+      color: white;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .presentation-mode.active {
+      display: flex;
+    }
+
+    .presentation-content {
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .presentation-output {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      word-break: break-all;
+    }
+
+    .presentation-input {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      opacity: 0.8;
+    }
+
+    .presentation-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .clipboard-monitor {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary-color);
+      color: white;
+      padding: 10px 15px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    .clipboard-monitor.active {
+      display: flex;
+    }
+
+    @media (max-width: 576px) {
+      .container {
+        padding: 15px;
+      }
+      
+      h2 {
+        font-size: 20px;
+      }
+      
+      .subtitle {
+        font-size: 12px;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+      
+      button {
+        padding: 12px;
+      }
+      
+      .intro-title {
+        font-size: 24px;
+      }
+      
+      .intro-subtitle {
+        font-size: 14px;
+      }
+
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+
+      .presentation-output {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Intro Screen -->
+  <div class="intro-overlay" id="introOverlay">
+    <div class="intro-content">
+      <div class="intro-icon">
+        <i class="fas fa-text-height"></i>
+      </div>
+      <h1 class="intro-title">Welcome to Long Text Converter!</h1>
+      <p class="intro-subtitle">Perpanjang huruf dalam kata-kata dengan berbagai mode.</p>
+      <div class="intro-progress">
+        <div class="intro-progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <div>
+        <h2>Long Text Converter</h2>
+        <p class="subtitle">Perpanjang huruf dalam kata-kata dengan berbagai mode.</p>
+      </div>
+      <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="converter">Converter</div>
+      <div class="tab" data-tab="history">History</div>
+      <div class="tab" data-tab="templates">Templates</div>
+      <div class="tab" data-tab="stats">Stats</div>
+    </div>
+
+    <div class="tab-content active" id="converter">
+      <div class="input-group">
+        <label for="inputText">Enter text:</label>
+        <input id="inputText" placeholder="Type here..." oninput="convert()" />
+        <p style="font-size:12px;color:#666;margin-top:-5px;margin-bottom:8px;">Contoh: hello world, programming is fun, long text...</p>
+      </div>
+
+      <div class="input-group">
+        <label for="conversionMode">Conversion Mode:</label>
+        <div class="mode-selector">
+          <div class="mode-option active" data-mode="suffix">Belakang Panjang</div>
+          <div class="mode-option" data-mode="prefix">Depan Panjang</div>
+          <div class="mode-option" data-mode="both">Depan + Belakang</div>
+          <div class="mode-option" data-mode="mid">Depan + Tengah + Belakang</div>
+          <div class="mode-option" data-mode="full">Semua Huruf Panjang</div>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="output">Result:</label>
+        <div class="result-container">
+          <textarea id="output" rows="4" readonly></textarea>
+          <div class="char-count" id="charCount">0 characters</div>
+        </div>
+        <div class="button-group">
+          <button id="copyBtn" class="copy-btn hidden" onclick="copyResult()">
+            <i class="fas fa-copy"></i> Copy
+          </button>
+          <button id="shareBtn" class="share-btn hidden" onclick="toggleShareOptions()">
+            <i class="fas fa-share"></i> Share
+          </button>
+          <button id="presentBtn" class="secondary-btn hidden" onclick="openPresentationMode()">
+            <i class="fas fa-expand"></i> Present
+          </button>
+          <button id="clearBtn" class="clear-btn hidden" onclick="clearText()">
+            <i class="fas fa-trash"></i> Clear
+          </button>
+        </div>
+        <div class="share-options" id="shareOptions">
+          <div class="share-option" onclick="shareToSocial('twitter')">
+            <i class="fab fa-twitter"></i> Twitter
+          </div>
+          <div class="share-option" onclick="shareToSocial('facebook')">
+            <i class="fab fa-facebook"></i> Facebook
+          </div>
+          <div class="share-option" onclick="shareToSocial('whatsapp')">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+          </div>
+          <div class="share-option" onclick="downloadAsFile()">
+            <i class="fas fa-download"></i> Download as file
+          </div>
+        </div>
+      </div>
+
+      <div id="mappingBreakdown" class="mapping-breakdown hidden"></div>
+
+      <div id="translation" class="translation hidden">
+        <strong>Original Text:</strong>
+        <div id="translationText"></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="history">
+      <div class="button-group">
+        <button id="clearHistoryBtn" class="clear-btn" onclick="clearHistory()">
+          <i class="fas fa-trash"></i> Clear History
+        </button>
+        <button id="exportHistoryBtn" class="secondary-btn" onclick="exportHistory()">
+          <i class="fas fa-download"></i> Export
+        </button>
+      </div>
+      <div class="history-container" id="historyContainer">
+        <!-- History items will be added here -->
+      </div>
+    </div>
+
+    <div class="tab-content" id="templates">
+      <div class="input-group">
+        <label>Quick Templates:</label>
+        <div class="template-container" id="templateContainer">
+          <div class="template-item" onclick="useTemplate('hello world')">
+            hello world <i class="fas fa-arrow-right"></i> helloooooo worlddddddd
+          </div>
+          <div class="template-item" onclick="useTemplate('programming is fun')">
+            programming is fun <i class="fas fa-arrow-right"></i> ppprogramming iiiis fuuuun
+          </div>
+          <div class="template-item" onclick="useTemplate('long text converter')">
+            long text converter <i class="fas fa-arrow-right"></i> loooooong teeeeext converrrrrter
+          </div>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Add New Template:</label>
+        <div class="custom-mapping-row">
+          <input type="text" id="newTemplateText" class="custom-mapping-input" placeholder="Text">
+          <button class="add-mapping-btn" onclick="addTemplate()">
+            <i class="fas fa-plus"></i> Add
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="stats">
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-value" id="totalConversions">0</div>
+          <div class="stat-label">Total Conversions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalCharacters">0</div>
+          <div class="stat-label">Total Characters</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="charactersStretched">0</div>
+          <div class="stat-label">Characters Stretched</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="favoriteMode">Suffix</div>
+          <div class="stat-label">Favorite Mode</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-title">How Long Text Converter Works:</div>
+      <div id="mappingInfo">
+        This tool stretches letters in words based on the selected mode.<br>
+        Example: "hello world" → "helloooooo worlddddddd"<br>
+        Example: "programming is fun" → "pprogramming iiiis fuuuun"
+      </div>
+      <div class="info-title" style="margin-top: 12px;">Modes:</div>
+      <div>
+        <strong>Belakang Panjang:</strong> Memperpanjang huruf terakhir setiap kata.<br>
+        <strong>Depan Panjang:</strong> Memperpanjang huruf pertama setiap kata.<br>
+        <strong>Depan + Belakang:</strong> Memperpanjang huruf pertama dan terakhir setiap kata.<br>
+        <strong>Depan + Tengah + Belakang:</strong> Memperpanjang semua huruf setiap kata.<br>
+        <strong>Semua Huruf Panjang:</strong> Memperpanjang semua huruf setiap kata.
+      </div>
+    </div>
+  </div>
+
+  <div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">Success!</span>
+  </div>
+
+  <!-- Presentation Mode -->
+  <div class="presentation-mode" id="presentationMode">
+    <button class="presentation-close" onclick="closePresentationMode()">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="presentation-content">
+      <div class="presentation-output" id="presentationOutput"></div>
+      <div class="presentation-input" id="presentationInput"></div>
+    </div>
+  </div>
+
+  <!-- Clipboard Monitor -->
+  <div class="clipboard-monitor" id="clipboardMonitor" onclick="convertClipboard()">
+    <i class="fas fa-clipboard"></i> Convert Clipboard
+  </div>
+
+  <script>
+    // Templates
+    let templates = JSON.parse(localStorage.getItem('stretchTemplates')) || [
+      { text: "hello world", result: "helloooooo worlddddddd" },
+      { text: "programming is fun", result: "pprogramming iiiis fuuuun" },
+      { text: "long text converter", result: "loooooong teeeeext converrrrrter" }
+    ];
+
+    // Statistics
+    let stats = JSON.parse(localStorage.getItem('stretchStats')) || {
+      totalConversions: 0,
+      totalCharacters: 0,
+      charactersStretched: 0,
+      modeUsage: { suffix: 0, prefix: 0, both: 0, mid: 0, full: 0 }
+    };
+
+    // Current mode
+    let currentMode = 'suffix';
+    let conversionHistory = JSON.parse(localStorage.getItem('stretchConversionHistory')) || [];
+    let clipboardMonitorActive = false;
+    let lastClipboardContent = "";
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show intro screen
+      const introOverlay = document.getElementById('introOverlay');
+      
+      // Hide intro after 2.5 seconds
+      setTimeout(() => {
+        introOverlay.style.opacity = '0';
+        setTimeout(() => {
+          introOverlay.style.display = 'none';
+        }, 500);
+      }, 2500);
+      
+      // Check for saved theme preference
+      if (localStorage.getItem('stretchTheme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+      }
+
+      // Load history
+      loadHistory();
+      
+      // Load templates
+      loadTemplates();
+      
+      // Load stats
+      updateStats();
+
+      // Set up event listeners
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          this.classList.add('active');
+          document.getElementById(this.dataset.tab).classList.add('active');
+        });
+      });
+
+      document.querySelectorAll('[data-mode]').forEach(option => {
+        option.addEventListener('click', function() {
+          document.querySelectorAll('[data-mode]').forEach(o => o.classList.remove('active'));
+          this.classList.add('active');
+          currentMode = this.dataset.mode;
+          convert(); // Re-convert with new mode
+        });
+      });
+
+      document.getElementById('themeToggle').addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        this.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        localStorage.setItem('stretchTheme', isDark ? 'dark' : 'light');
+      });
+      
+      // Close share options when clicking outside
+      document.addEventListener('click', function(e) {
+        const shareOptions = document.getElementById('shareOptions');
+        const shareBtn = document.getElementById('shareBtn');
+        
+        if (!shareOptions.contains(e.target) && e.target !== shareBtn) {
+          shareOptions.classList.remove('show');
+        }
+      });
+    });
+
+    function stretchSuffix(t, n = 5) {
+      return t.split(" ").map(word => {
+        if (!word) return "";
+        return word.slice(0, -1) + word[word.length - 1].repeat(n);
+      }).join(" ");
+    }
+
+    function stretchPrefix(t, n = 5) {
+      return t.split(" ").map(word => {
+        if (!word) return "";
+        return word[0].repeat(n) + word.slice(1);
+      }).join(" ");
+    }
+
+    function stretchBoth(t, n = 4) {
+      return t.split(" ").map(word => {
+        if (!word) return "";
+        return word[0].repeat(n) + word.slice(1, -1) + word[word.length - 1].repeat(n);
+      }).join(" ");
+    }
+
+    function stretchMid(t, n = 3) {
+      return t.split(" ").map(word => {
+        if (word.length <= 2) return stretchFull(word, n);
+        const start = word[0].repeat(n);
+        const mid = word.slice(1, -1).split('').map(c => c.repeat(n)).join('');
+        const end = word[word.length - 1].repeat(n);
+        return start + mid + end;
+      }).join(" ");
+    }
+
+    function stretchFull(t, n = 3) {
+      return t.split(" ").map(word => {
+        return word.split('').map(c => c.repeat(n)).join('');
+      }).join(" ");
+    }
+
+    function convert() {
+      const text = document.getElementById("inputText").value;
+      let result = "";
+      
+      switch (currentMode) {
+        case "suffix":
+          result = stretchSuffix(text);
+          break;
+        case "prefix":
+          result = stretchPrefix(text);
+          break;
+        case "both":
+          result = stretchBoth(text);
+          break;
+        case "mid":
+          result = stretchMid(text);
+          break;
+        case "full":
+          result = stretchFull(text);
+          break;
+      }
+      
+      document.getElementById("output").value = result;
+      document.getElementById("charCount").textContent = `${result.length} characters`;
+      
+      // Show/hide elements based on whether there's input
+      if (text) {
+        document.getElementById("copyBtn").classList.remove("hidden");
+        document.getElementById("shareBtn").classList.remove("hidden");
+        document.getElementById("presentBtn").classList.remove("hidden");
+        document.getElementById("clearBtn").classList.remove("hidden");
+        document.getElementById("mappingBreakdown").classList.remove("hidden");
+        document.getElementById("translation").classList.remove("hidden");
+        
+        // Display mapping breakdown
+        const charactersStretched = result.length - text.length;
+        document.getElementById("mappingBreakdown").innerHTML = 
+          `<strong>Rincian Konversi:</strong><br>${charactersStretched} character(s) stretched`;
+        
+        // Display original text
+        document.getElementById("translationText").textContent = text;
+        
+        // Add to history
+        addToHistory(text, result);
+        
+        // Update stats
+        updateConversionStats(text, result);
+      } else {
+        document.getElementById("copyBtn").classList.add("hidden");
+        document.getElementById("shareBtn").classList.add("hidden");
+        document.getElementById("presentBtn").classList.add("hidden");
+        document.getElementById("clearBtn").classList.add("hidden");
+        document.getElementById("mappingBreakdown").classList.add("hidden");
+        document.getElementById("translation").classList.add("hidden");
+      }
+    }
+    
+    function copyResult() {
+      const output = document.getElementById("output");
+      output.select();
+      document.execCommand("copy");
+      
+      // Show notification
+      showNotification("Copied to clipboard!");
+    }
+    
+    function clearText() {
+      document.getElementById("inputText").value = "";
+      document.getElementById("output").value = "";
+      document.getElementById("charCount").textContent = "0 characters";
+      document.getElementById("copyBtn").classList.add("hidden");
+      document.getElementById("shareBtn").classList.add("hidden");
+      document.getElementById("presentBtn").classList.add("hidden");
+      document.getElementById("clearBtn").classList.add("hidden");
+      document.getElementById("mappingBreakdown").classList.add("hidden");
+      document.getElementById("translation").classList.add("hidden");
+    }
+    
+    function showNotification(message) {
+      const notification = document.getElementById("notification");
+      document.getElementById("notificationText").textContent = message;
+      notification.classList.add("show");
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        notification.classList.remove("show");
+      }, 3000);
+    }
+    
+    function addToHistory(original, converted) {
+      // Check if this conversion already exists in history
+      const exists = conversionHistory.some(item => 
+        item.original === original && item.converted === converted
+      );
+      
+      if (!exists) {
+        conversionHistory.unshift({
+          original,
+          converted,
+          timestamp: new Date().toISOString()
+        });
+        
+        // Keep only the last 20 items
+        if (conversionHistory.length > 20) {
+          conversionHistory = conversionHistory.slice(0, 20);
+        }
+        
+        // Save to localStorage
+        localStorage.setItem('stretchConversionHistory', JSON.stringify(conversionHistory));
+        
+        // Update history display
+        loadHistory();
+      }
+    }
+    
+    function loadHistory() {
+      const historyContainer = document.getElementById('historyContainer');
+      
+      if (conversionHistory.length === 0) {
+        historyContainer.innerHTML = '<p style="text-align:center; color:#666;">No history yet</p>';
+        return;
+      }
+      
+      historyContainer.innerHTML = '';
+      
+      conversionHistory.forEach((item, index) => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        
+        const date = new Date(item.timestamp);
+        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+        
+        historyItem.innerHTML = `
+          <div class="history-text">${item.original}</div>
+          <div class="history-result">${item.converted}</div>
+          <button class="delete-history" onclick="deleteHistoryItem(${index})" title="Delete">
+            <i class="fas fa-times"></i>
+          </button>
+        `;
+        
+        historyItem.addEventListener('click', function(e) {
+          if (!e.target.closest('.delete-history')) {
+            document.getElementById('inputText').value = item.original;
+            document.getElementById('output').value = item.converted;
+            document.getElementById('charCount').textContent = `${item.converted.length} characters`;
+            document.getElementById('copyBtn').classList.remove('hidden');
+            document.getElementById('shareBtn').classList.remove('hidden');
+            document.getElementById('presentBtn').classList.remove('hidden');
+            document.getElementById('clearBtn').classList.remove('hidden');
+            document.getElementById('mappingBreakdown').classList.remove('hidden');
+            document.getElementById('translation').classList.remove('hidden');
+            document.getElementById('translationText').textContent = item.original;
+            
+            // Switch to converter tab
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('[data-tab="converter"]').classList.add('active');
+            document.getElementById('converter').classList.add('active');
+          }
+        });
+        
+        historyContainer.appendChild(historyItem);
+      });
+    }
+    
+    function deleteHistoryItem(index) {
+      conversionHistory.splice(index, 1);
+      localStorage.setItem('stretchConversionHistory', JSON.stringify(conversionHistory));
+      loadHistory();
+      showNotification("History item deleted");
+    }
+    
+    function clearHistory() {
+      if (confirm('Are you sure you want to clear all history?')) {
+        conversionHistory = [];
+        localStorage.setItem('stretchConversionHistory', JSON.stringify(conversionHistory));
+        loadHistory();
+        showNotification("History cleared");
+      }
+    }
+    
+    function exportHistory() {
+      const dataStr = JSON.stringify(conversionHistory, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = `stretch-text-history-${new Date().toISOString().slice(0,10)}.json`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      showNotification("History exported!");
+    }
+    
+    function toggleShareOptions() {
+      const shareOptions = document.getElementById('shareOptions');
+      shareOptions.classList.toggle('show');
+    }
+    
+    function shareToSocial(platform) {
+      const text = document.getElementById('inputText').value;
+      const result = document.getElementById('output').value;
+      const shareText = `"${text}" → "${result}"`;
+      
+      let url = '';
+      
+      switch(platform) {
+        case 'twitter':
+          url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+          break;
+        case 'facebook':
+          url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(shareText)}`;
+          break;
+        case 'whatsapp':
+          url = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+          break;
+      }
+      
+      if (url) {
+        window.open(url, '_blank');
+      }
+      
+      // Hide share options
+      document.getElementById('shareOptions').classList.remove('show');
+    }
+    
+    function downloadAsFile() {
+      const text = document.getElementById('inputText').value;
+      const result = document.getElementById('output').value;
+      const content = `Original: ${text}\nConverted: ${result}`;
+      
+      const dataUri = 'data:text/plain;charset=utf-8,'+ encodeURIComponent(content);
+      
+      const exportFileDefaultName = `stretch-text-${new Date().toISOString().slice(0,10)}.txt`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      // Hide share options
+      document.getElementById('shareOptions').classList.remove('show');
+      
+      showNotification("File downloaded!");
+    }
+    
+    function openPresentationMode() {
+      const text = document.getElementById('inputText').value;
+      const result = document.getElementById('output').value;
+      
+      document.getElementById('presentationOutput').textContent = result;
+      document.getElementById('presentationInput').textContent = text;
+      document.getElementById('presentationMode').classList.add('active');
+    }
+    
+    function closePresentationMode() {
+      document.getElementById('presentationMode').classList.remove('active');
+    }
+    
+    function loadTemplates() {
+      const templateContainer = document.getElementById('templateContainer');
+      templateContainer.innerHTML = '';
+      
+      templates.forEach((template, index) => {
+        const templateItem = document.createElement('div');
+        templateItem.className = 'template-item';
+        templateItem.innerHTML = `
+          ${template.text} <i class="fas fa-arrow-right"></i> ${template.result}
+          <i class="fas fa-times" onclick="removeTemplate(${index})" style="margin-left:5px;"></i>
+        `;
+        templateItem.onclick = function(e) {
+          if (!e.target.classList.contains('fa-times')) {
+            useTemplate(template.text);
+          }
+        };
+        templateContainer.appendChild(templateItem);
+      });
+    }
+    
+    function useTemplate(text) {
+      document.getElementById('inputText').value = text;
+      convert();
+      
+      // Switch to converter tab
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelector('[data-tab="converter"]').classList.add('active');
+      document.getElementById('converter').classList.add('active');
+    }
+    
+    function addTemplate() {
+      const text = document.getElementById('newTemplateText').value.trim();
+      if (!text) return;
+      
+      // Convert the text using current mode
+      let result = "";
+      switch (currentMode) {
+        case "suffix":
+          result = stretchSuffix(text);
+          break;
+        case "prefix":
+          result = stretchPrefix(text);
+          break;
+        case "both":
+          result = stretchBoth(text);
+          break;
+        case "mid":
+          result = stretchMid(text);
+          break;
+        case "full":
+          result = stretchFull(text);
+          break;
+      }
+      
+      templates.push({ text, result });
+      localStorage.setItem('stretchTemplates', JSON.stringify(templates));
+      
+      document.getElementById('newTemplateText').value = '';
+      loadTemplates();
+      
+      showNotification("Template added!");
+    }
+    
+    function removeTemplate(index) {
+      templates.splice(index, 1);
+      localStorage.setItem('stretchTemplates', JSON.stringify(templates));
+      loadTemplates();
+      showNotification("Template removed!");
+    }
+    
+    function updateConversionStats(text, result) {
+      stats.totalConversions++;
+      stats.totalCharacters += text.length;
+      stats.modeUsage[currentMode]++;
+      
+      // Count characters stretched
+      const charactersStretched = result.length - text.length;
+      stats.charactersStretched += charactersStretched;
+      
+      // Save stats
+      localStorage.setItem('stretchStats', JSON.stringify(stats));
+      
+      // Update display
+      updateStats();
+    }
+    
+    function updateStats() {
+      document.getElementById('totalConversions').textContent = stats.totalConversions;
+      document.getElementById('totalCharacters').textContent = stats.totalCharacters;
+      document.getElementById('charactersStretched').textContent = stats.charactersStretched;
+      
+      // Find favorite mode
+      let favoriteMode = 'Suffix';
+      let maxModeUsage = 0;
+      for (const mode in stats.modeUsage) {
+        if (stats.modeUsage[mode] > maxModeUsage) {
+          maxModeUsage = stats.modeUsage[mode];
+          favoriteMode = mode.charAt(0).toUpperCase() + mode.slice(1);
+        }
+      }
+      document.getElementById('favoriteMode').textContent = favoriteMode;
+    }
+    
+    function toggleClipboardMonitor() {
+      clipboardMonitorActive = !clipboardMonitorActive;
+      const btn = document.getElementById('clipboardToggle');
+      const monitor = document.getElementById('clipboardMonitor');
+      
+      if (clipboardMonitorActive) {
+        btn.innerHTML = '<i class="fas fa-clipboard"></i> Disable';
+        btn.classList.remove('secondary-btn');
+        btn.classList.add('clear-btn');
+        monitor.classList.add('active');
+        
+        // Store current clipboard content
+        navigator.clipboard.readText().then(text => {
+          lastClipboardContent = text;
+        }).catch(err => {
+          console.error('Failed to read clipboard contents: ', err);
+        });
+        
+        // Start monitoring clipboard
+        monitorClipboard();
+        
+        showNotification("Clipboard monitor enabled!");
+      } else {
+        btn.innerHTML = '<i class="fas fa-clipboard"></i> Enable';
+        btn.classList.remove('clear-btn');
+        btn.classList.add('secondary-btn');
+        monitor.classList.remove('active');
+        
+        showNotification("Clipboard monitor disabled!");
+      }
+    }
+    
+    function monitorClipboard() {
+      if (!clipboardMonitorActive) return;
+      
+      navigator.clipboard.readText().then(text => {
+        if (text !== lastClipboardContent && text.trim()) {
+          lastClipboardContent = text;
+          // Show notification that clipboard has changed
+          const monitor = document.getElementById('clipboardMonitor');
+          monitor.style.animation = 'none';
+          setTimeout(() => {
+            monitor.style.animation = 'pulse 1s infinite';
+          }, 10);
+        }
+      }).catch(err => {
+        console.error('Failed to read clipboard contents: ', err);
+      });
+      
+      // Check again after 1 second
+      setTimeout(monitorClipboard, 1000);
+    }
+    
+    function convertClipboard() {
+      if (!lastClipboardContent.trim()) return;
+      
+      document.getElementById('inputText').value = lastClipboardContent;
+      convert();
+      
+      // Switch to converter tab
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelector('[data-tab="converter"]').classList.add('active');
+      document.getElementById('converter').classList.add('active');
+      
+      // Reset animation
+      const monitor = document.getElementById('clipboardMonitor');
+      monitor.style.animation = 'none';
+    }
+    
+    // Add pulse animation for clipboard monitor
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
