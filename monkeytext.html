@@ -2,48 +2,80 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Bahasa Monyet (a / aa / u)</title>
+  <title>Bahasa Monyet (Encode + Decode)</title>
 </head>
 <body>
-  <h3>Bahasa Monyet (a · aa · u)</h3>
+  <h2>Bahasa Monyet Converter</h2>
+
+  <label>Mode:</label><br>
+  <select id="mode" onchange="run()">
+    <option value="encode">Encode (Text → Monyet)</option>
+    <option value="decode">Decode (Monyet → Text)</option>
+  </select><br><br>
 
   <label>Type here:</label><br>
-  <input id="inputText" type="text" oninput="toMonkey()" style="width:90%"><br><br>
+  <textarea id="inputText" rows="3" cols="60" oninput="run()"></textarea><br><br>
 
   <label>Result:</label><br>
   <textarea id="output" rows="4" cols="60" readonly></textarea><br><br>
 
-  <button onclick="copyResult()">Copy Result</button>
+  <button onclick="copyResult()">Copy</button>
   <button onclick="clearAll()">Clear</button>
 
 <script>
-  // sets
-  const vowels = new Set(['a','e','i','o','u']);
-  const hard = new Set(['k','g','p','t','b','d','q']);
-  const soft = new Set(['m','n','s','l','r','h']);
-  // other letters default to hard-style 'a' (you can adjust)
+  // MAP HURUF → KODE
+  const encodeMap = {
+    A:"aaaaa", B:"aaaau", C:"aaaua", D:"aaauu",
+    E:"aauaa", F:"aauau", G:"aauua", H:"aauuu",
+    I:"auaaa", J:"auaau", K:"auaua", L:"auauu",
+    M:"auuaa", N:"auuau", O:"auuua", P:"auuuu",
+    Q:"uaaaa", R:"uaaau", S:"uaaua", T:"uaauu",
+    U:"uauaa", V:"uauau", W:"uauua", X:"uauuu",
+    Y:"uuaaa", Z:"uuaau"
+  };
 
-  function mapChar(ch){
-    if (ch === ' ') return 'u';            // space -> u
-    if (!/[a-z]/.test(ch)) return ch;      // non-letter: keep as is
-    if (vowels.has(ch)) return 'aa';
-    if (soft.has(ch)) return 'u';
-    if (hard.has(ch)) return 'a';
-    return 'a'; // default for remaining letters
+  // Buat MAP kebalikan: KODE → HURUF
+  const decodeMap = {};
+  for (const [char, code] of Object.entries(encodeMap)) {
+    decodeMap[code] = char;
   }
 
-  function toMonkey(){
-    const raw = document.getElementById('inputText').value || '';
-    const s = raw.toLowerCase();
-    let outParts = [];
-    for (let i=0; i<s.length; i++){
-      const ch = s[i];
-      outParts.push(mapChar(ch));
+  function encodeText(text){
+    text = text.toUpperCase();
+    let out = "";
+    for (let ch of text){
+      if (/[A-Z]/.test(ch)){
+        out += encodeMap[ch] + " ";
+      } else if (ch === " ") {
+        out += "/ ";   // tanda spasi
+      }
     }
-    // join with single spaces so result readable
-    // but we can keep without spaces if you prefer
-    const out = outParts.join(' ');
-    document.getElementById('output').value = out;
+    return out.trim();
+  }
+
+  function decodeText(text){
+    const parts = text.trim().split(/\s+/);
+    let out = "";
+
+    for (let token of parts){
+      if (token === "/") { 
+        out += " ";
+        continue;
+      }
+      out += decodeMap[token] ?? "?";
+    }
+    return out;
+  }
+
+  function run(){
+    const mode = document.getElementById("mode").value;
+    const input = document.getElementById("inputText").value;
+
+    if(mode === "encode"){
+      document.getElementById("output").value = encodeText(input);
+    } else {
+      document.getElementById("output").value = decodeText(input);
+    }
   }
 
   function copyResult(){
@@ -55,10 +87,10 @@
   }
 
   function clearAll(){
-    document.getElementById('inputText').value = '';
-    document.getElementById('output').value = '';
-    document.getElementById('inputText').focus();
+    document.getElementById("inputText").value = "";
+    document.getElementById("output").value = "";
   }
 </script>
+
 </body>
 </html>
