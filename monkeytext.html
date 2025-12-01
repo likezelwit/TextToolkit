@@ -1,96 +1,1616 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bahasa Monyet (Encode + Decode)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #f72585;
+      --success-color: #06ffa5;
+      --warning-color: #ffbe0b;
+      --danger-color: #fb5607;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --gray-color: #6c757d;
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      transition: var(--transition);
+    }
+
+    body.dark-mode {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    body.dark-mode .container {
+      background: rgba(30, 30, 46, 0.95);
+      color: #f8f9fa;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    body.dark-mode h2 {
+      color: var(--success-color);
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--gray-color);
+      margin-top: -5px;
+      margin-bottom: 10px;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      font-size: 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      padding: 8px;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-toggle:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+      transform: rotate(15deg);
+    }
+
+    body.dark-mode .theme-toggle {
+      color: var(--warning-color);
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--dark-color);
+      font-size: 14px;
+    }
+
+    body.dark-mode label {
+      color: #f8f9fa;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: var(--border-radius);
+      border: 1px solid #ddd;
+      font-size: 15px;
+      transition: var(--transition);
+      background-color: #fff;
+      color: var(--dark-color);
+    }
+
+    body.dark-mode input, 
+    body.dark-mode textarea, 
+    body.dark-mode select {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #f8f9fa;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .primary-btn {
+      background: var(--primary-color);
+      color: white;
+      flex: 1;
+    }
+
+    .primary-btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .secondary-btn {
+      background: var(--light-color);
+      color: var(--dark-color);
+    }
+
+    .secondary-btn:hover {
+      background: #e9ecef;
+    }
+
+    body.dark-mode .secondary-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f8f9fa;
+    }
+
+    .copy-btn {
+      background: var(--success-color);
+      color: var(--dark-color);
+    }
+
+    .copy-btn:hover {
+      background: #00d084;
+    }
+
+    .clear-btn {
+      background: var(--danger-color);
+      color: white;
+    }
+
+    .clear-btn:hover {
+      background: #e63946;
+    }
+
+    .share-btn {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    .share-btn:hover {
+      background: #d70466;
+    }
+
+    .result-container {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    .char-count {
+      position: absolute;
+      bottom: -18px;
+      right: 0;
+      font-size: 11px;
+      color: var(--gray-color);
+    }
+
+    .mapping-breakdown {
+      background: var(--light-color);
+      padding: 12px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: var(--dark-color);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    body.dark-mode .mapping-breakdown {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f8f9fa;
+    }
+
+    .translation {
+      background: rgba(67, 97, 238, 0.1);
+      padding: 12px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      font-size: 13px;
+      color: var(--dark-color);
+      border-left: 4px solid var(--accent-color);
+    }
+
+    body.dark-mode .translation {
+      background: rgba(247, 37, 133, 0.1);
+      color: #f8f9fa;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--success-color);
+      color: var(--dark-color);
+      padding: 12px 18px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    body.dark-mode .tabs {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .tab {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--gray-color);
+      border-bottom: 2px solid transparent;
+      transition: var(--transition);
+      font-size: 14px;
+    }
+
+    .tab.active {
+      color: var(--primary-color);
+      border-bottom-color: var(--primary-color);
+    }
+
+    body.dark-mode .tab.active {
+      color: var(--success-color);
+      border-bottom-color: var(--success-color);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .history-container {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 12px;
+    }
+
+    .history-item {
+      padding: 10px;
+      border-radius: var(--border-radius);
+      margin-bottom: 8px;
+      background: var(--light-color);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    body.dark-mode .history-item {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .history-item:hover {
+      background: #e9ecef;
+      transform: translateX(5px);
+    }
+
+    body.dark-mode .history-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .history-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 14px;
+    }
+
+    .history-result {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-left: 8px;
+      font-size: 14px;
+    }
+
+    body.dark-mode .history-result {
+      color: var(--success-color);
+    }
+
+    .delete-history {
+      background: none;
+      border: none;
+      color: var(--danger-color);
+      cursor: pointer;
+      padding: 5px;
+      margin-left: 8px;
+    }
+
+    .info-section {
+      background: rgba(67, 97, 238, 0.05);
+      padding: 12px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      font-size: 13px;
+      color: var(--dark-color);
+    }
+
+    body.dark-mode .info-section {
+      background: rgba(255, 255, 255, 0.05);
+      color: #f8f9fa;
+    }
+
+    .info-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary-color);
+      font-size: 14px;
+    }
+
+    body.dark-mode .info-title {
+      color: var(--success-color);
+    }
+
+    .mode-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .mode-option {
+      flex: 1;
+      padding: 8px;
+      text-align: center;
+      border-radius: var(--border-radius);
+      background: var(--light-color);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 13px;
+    }
+
+    .mode-option.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    body.dark-mode .mode-option {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    body.dark-mode .mode-option.active {
+      background: var(--success-color);
+      color: var(--dark-color);
+    }
+
+    /* Intro Screen Styles */
+    .intro-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+
+    body.dark-mode .intro-overlay {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .intro-content {
+      text-align: center;
+      color: white;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      max-width: 80%;
+      animation: fadeInScale 0.8s ease;
+    }
+
+    .intro-title {
+      font-size: 28px;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .intro-subtitle {
+      font-size: 16px;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    .intro-icon {
+      font-size: 50px;
+      margin-bottom: 20px;
+      color: var(--success-color);
+    }
+
+    .intro-progress {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .intro-progress-bar {
+      height: 100%;
+      background: var(--success-color);
+      width: 0;
+      animation: progressAnimation 2s ease forwards;
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes progressAnimation {
+      to {
+        width: 100%;
+      }
+    }
+
+    .template-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .template-item {
+      padding: 6px 10px;
+      background: var(--light-color);
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    body.dark-mode .template-item {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .template-item:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .template-item i {
+      font-size: 10px;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .stat-card {
+      background: var(--light-color);
+      padding: 10px;
+      border-radius: var(--border-radius);
+      text-align: center;
+    }
+
+    body.dark-mode .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    body.dark-mode .stat-value {
+      color: var(--success-color);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--gray-color);
+      margin-top: 3px;
+    }
+
+    .share-options {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      padding: 10px;
+      z-index: 100;
+      display: none;
+    }
+
+    body.dark-mode .share-options {
+      background: var(--dark-color);
+    }
+
+    .share-options.show {
+      display: block;
+    }
+
+    .share-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .share-option:hover {
+      background: var(--light-color);
+    }
+
+    body.dark-mode .share-option:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .presentation-mode {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark-color);
+      color: white;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .presentation-mode.active {
+      display: flex;
+    }
+
+    .presentation-content {
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .presentation-output {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      word-break: break-all;
+    }
+
+    .presentation-input {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      opacity: 0.8;
+    }
+
+    .presentation-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 576px) {
+      .container {
+        padding: 15px;
+      }
+      
+      h2 {
+        font-size: 20px;
+      }
+      
+      .subtitle {
+        font-size: 12px;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+      
+      button {
+        padding: 12px;
+      }
+      
+      .intro-title {
+        font-size: 24px;
+      }
+      
+      .intro-subtitle {
+        font-size: 14px;
+      }
+
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+
+      .presentation-output {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h2>Bahasa Monyet Converter</h2>
+  <!-- Intro Screen -->
+  <div class="intro-overlay" id="introOverlay">
+    <div class="intro-content">
+      <div class="intro-icon">
+        <i class="fas fa-monkey"></i>
+      </div>
+      <h1 class="intro-title">Welcome to Bahasa Monyet Converter!</h1>
+      <p class="intro-subtitle">Konversi teks ke Bahasa Monyet dan sebaliknya.</p>
+      <div class="intro-progress">
+        <div class="intro-progress-bar"></div>
+      </div>
+    </div>
+  </div>
 
-  <label>Mode:</label><br>
-  <select id="mode" onchange="run()">
-    <option value="encode">Encode (Text → Monyet)</option>
-    <option value="decode">Decode (Monyet → Text)</option>
-  </select><br><br>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h2>Bahasa Monyet Converter</h2>
+        <p class="subtitle">Konversi teks ke Bahasa Monyet dan sebaliknya.</p>
+      </div>
+      <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
 
-  <label>Type here:</label><br>
-  <textarea id="inputText" rows="3" cols="60" oninput="run()"></textarea><br><br>
+    <div class="tabs">
+      <div class="tab active" data-tab="converter">Converter</div>
+      <div class="tab" data-tab="reverse">Reverse</div>
+      <div class="tab" data-tab="history">History</div>
+      <div class="tab" data-tab="templates">Templates</div>
+      <div class="tab" data-tab="stats">Stats</div>
+    </div>
 
-  <label>Result:</label><br>
-  <textarea id="output" rows="4" cols="60" readonly></textarea><br><br>
+    <div class="tab-content active" id="converter">
+      <div class="input-group">
+        <label for="inputText">Enter text:</label>
+        <textarea id="inputText" rows="3" oninput="convert()" placeholder="Type here..."></textarea>
+        <p style="font-size:12px;color:#666;margin-top:-5px;margin-bottom:8px;">Contoh: hello world, selamat pagi, monyet lucu...</p>
+      </div>
 
-  <button onclick="copyResult()">Copy</button>
-  <button onclick="clearAll()">Clear</button>
+      <div class="input-group">
+        <label for="output">Result:</label>
+        <div class="result-container">
+          <textarea id="output" rows="4" readonly></textarea>
+          <div class="char-count" id="charCount">0 characters</div>
+        </div>
+        <div class="button-group">
+          <button id="copyBtn" class="copy-btn hidden" onclick="copyResult()">
+            <i class="fas fa-copy"></i> Copy
+          </button>
+          <button id="shareBtn" class="share-btn hidden" onclick="toggleShareOptions()">
+            <i class="fas fa-share"></i> Share
+          </button>
+          <button id="presentBtn" class="secondary-btn hidden" onclick="openPresentationMode()">
+            <i class="fas fa-expand"></i> Present
+          </button>
+          <button id="clearBtn" class="clear-btn hidden" onclick="clearAll()">
+            <i class="fas fa-trash"></i> Clear
+          </button>
+        </div>
+        <div class="share-options" id="shareOptions">
+          <div class="share-option" onclick="shareToSocial('twitter')">
+            <i class="fab fa-twitter"></i> Twitter
+          </div>
+          <div class="share-option" onclick="shareToSocial('facebook')">
+            <i class="fab fa-facebook"></i> Facebook
+          </div>
+          <div class="share-option" onclick="shareToSocial('whatsapp')">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+          </div>
+          <div class="share-option" onclick="downloadAsFile()">
+            <i class="fas fa-download"></i> Download as file
+          </div>
+        </div>
+      </div>
 
-<script>
-  // MAP HURUF → KODE
-  const encodeMap = {
-    A:"aaaaa", B:"aaaau", C:"aaaua", D:"aaauu",
-    E:"aauaa", F:"aauau", G:"aauua", H:"aauuu",
-    I:"auaaa", J:"auaau", K:"auaua", L:"auauu",
-    M:"auuaa", N:"auuau", O:"auuua", P:"auuuu",
-    Q:"uaaaa", R:"uaaau", S:"uaaua", T:"uaauu",
-    U:"uauaa", V:"uauau", W:"uauua", X:"uauuu",
-    Y:"uuaaa", Z:"uuaau"
-  };
+      <div id="mappingBreakdown" class="mapping-breakdown hidden"></div>
 
-  // Buat MAP kebalikan: KODE → HURUF
-  const decodeMap = {};
-  for (const [char, code] of Object.entries(encodeMap)) {
-    decodeMap[code] = char;
-  }
+      <div id="translation" class="translation hidden">
+        <strong>Terjemahan:</strong>
+        <div id="translationText"></div>
+      </div>
+    </div>
 
-  function encodeText(text){
-    text = text.toUpperCase();
-    let out = "";
-    for (let ch of text){
-      if (/[A-Z]/.test(ch)){
-        out += encodeMap[ch] + " ";
-      } else if (ch === " ") {
-        out += "/ ";   // tanda spasi
+    <div class="tab-content" id="reverse">
+      <div class="input-group">
+        <label for="reverseInput">Enter monkey language:</label>
+        <textarea id="reverseInput" rows="3" oninput="reverseConvert()" placeholder="Type monkey language here..."></textarea>
+        <p style="font-size:12px;color:#666;margin-top:-5px;margin-bottom:8px;">Contoh: aauuaauuauuuaaauuau, aauuaauuuaauuaauuaauuaauu...</p>
+      </div>
+
+      <div class="input-group">
+        <label for="reverseOutput">Result:</label>
+        <div class="result-container">
+          <textarea id="reverseOutput" rows="4" readonly></textarea>
+          <div class="char-count" id="reverseCharCount">0 characters</div>
+        </div>
+        <div class="button-group">
+          <button id="reverseCopyBtn" class="copy-btn hidden" onclick="copyReverseResult()">
+            <i class="fas fa-copy"></i> Copy
+          </button>
+          <button id="reverseShareBtn" class="share-btn hidden" onclick="toggleReverseShareOptions()">
+            <i class="fas fa-share"></i> Share
+          </button>
+          <button id="reversePresentBtn" class="secondary-btn hidden" onclick="openReversePresentationMode()">
+            <i class="fas fa-expand"></i> Present
+          </button>
+          <button id="reverseClearBtn" class="clear-btn hidden" onclick="clearReverseAll()">
+            <i class="fas fa-trash"></i> Clear
+          </button>
+        </div>
+        <div class="share-options" id="reverseShareOptions">
+          <div class="share-option" onclick="shareReverseToSocial('twitter')">
+            <i class="fab fa-twitter"></i> Twitter
+          </div>
+          <div class="share-option" onclick="shareReverseToSocial('facebook')">
+            <i class="fab fa-facebook"></i> Facebook
+          </div>
+          <div class="share-option" onclick="shareReverseToSocial('whatsapp')">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+          </div>
+          <div class="share-option" onclick="downloadReverseAsFile()">
+            <i class="fas fa-download"></i> Download as file
+          </div>
+        </div>
+      </div>
+
+      <div id="reverseMappingBreakdown" class="mapping-breakdown hidden"></div>
+
+      <div id="reverseTranslation" class="translation hidden">
+        <strong>Terjemahan:</strong>
+        <div id="reverseTranslationText"></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="history">
+      <div class="button-group">
+        <button id="clearHistoryBtn" class="clear-btn" onclick="clearHistory()">
+          <i class="fas fa-trash"></i> Clear History
+        </button>
+        <button id="exportHistoryBtn" class="secondary-btn" onclick="exportHistory()">
+          <i class="fas fa-download"></i> Export
+        </button>
+      </div>
+      <div class="history-container" id="historyContainer">
+        <!-- History items will be added here -->
+      </div>
+    </div>
+
+    <div class="tab-content" id="templates">
+      <div class="input-group">
+        <label>Quick Templates:</label>
+        <div class="template-container" id="templateContainer">
+          <div class="template-item" onclick="useTemplate('hello')">
+            hello <i class="fas fa-arrow-right"></i> aauuaaauuauuuaaauuau
+          </div>
+          <div class="template-item" onclick="useTemplate('selamat')">
+            selamat <i class="fas fa-arrow-right"></i> aauuaauuuaauuaauuaauuaauu
+          </div>
+          <div class="template-item" onclick="useTemplate('monyet')">
+            monyet <i class="fas fa-arrow-right"></i> auuuuaauuaauuauauu
+          </div>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Add New Template:</label>
+        <div class="custom-mapping-row">
+          <input type="text" id="newTemplateText" class="custom-mapping-input" placeholder="Text">
+          <button class="add-mapping-btn" onclick="addTemplate()">
+            <i class="fas fa-plus"></i> Add
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="stats">
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-value" id="totalConversions">0</div>
+          <div class="stat-label">Total Conversions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalCharacters">0</div>
+          <div class="stat-label">Total Characters</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="mostUsedChar">-</div>
+          <div class="stat-label">Most Used Character</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="favoriteMode">Encode</div>
+          <div class="stat-label">Favorite Mode</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-title">Tentang Bahasa Monyet:</div>
+      <div id="mappingInfo">
+        Bahasa Monyet adalah sistem encoding yang mengubah setiap huruf menjadi kombinasi 5 karakter 'a' dan 'u'.<br>
+        A=aaaaa, B=aaaau, C=aaaua, D=aaauu, E=aauaa, F=aauau, G=aauua, H=aauuu<br>
+        I=auaaa, J=auaau, K=auaua, L=auauu, M=auuaa, N=auuau, O=auuua, P=auuuu<br>
+        Q=uaaaa, R=uaaau, S=uaaua, T=uaauu, U=uauaa, V=uauau, W=uauua, X=uauuu<br>
+        Y=uuaaa, Z=uuaau<br>
+        Spasi direpresentasikan dengan karakter "/".
+      </div>
+      <div class="info-title" style="margin-top: 12px;">Contoh:</div>
+      <div>
+        hello → aauuaauuauuuaaauuau<br>
+        selamat → aauuaauuuaauuaauuaauuaauu<br>
+        monyet → auuuuaauuaauuauauu
+      </div>
+    </div>
+  </div>
+
+  <div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">Success!</span>
+  </div>
+
+  <!-- Presentation Mode -->
+  <div class="presentation-mode" id="presentationMode">
+    <button class="presentation-close" onclick="closePresentationMode()">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="presentation-content">
+      <div class="presentation-output" id="presentationOutput"></div>
+      <div class="presentation-input" id="presentationInput"></div>
+    </div>
+  </div>
+
+  <!-- Reverse Presentation Mode -->
+  <div class="presentation-mode" id="reversePresentationMode">
+    <button class="presentation-close" onclick="closeReversePresentationMode()">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="presentation-content">
+      <div class="presentation-output" id="reversePresentationOutput"></div>
+      <div class="presentation-input" id="reversePresentationInput"></div>
+    </div>
+  </div>
+
+  <script>
+    // MAP HURUF → KODE
+    const encodeMap = {
+      A:"aaaaa", B:"aaaau", C:"aaaua", D:"aaauu",
+      E:"aauaa", F:"aauau", G:"aauua", H:"aauuu",
+      I:"auaaa", J:"auaau", K:"auaua", L:"auauu",
+      M:"auuaa", N:"auuau", O:"auuua", P:"auuuu",
+      Q:"uaaaa", R:"uaaau", S:"uaaua", T:"uaauu",
+      U:"uauaa", V:"uauau", W:"uauua", X:"uauuu",
+      Y:"uuaaa", Z:"uuaau"
+    };
+
+    // Buat MAP kebalikan: KODE → HURUF
+    const decodeMap = {};
+    for (const [char, code] of Object.entries(encodeMap)) {
+      decodeMap[code] = char;
+    }
+
+    // Templates
+    let templates = JSON.parse(localStorage.getItem('monyetTemplates')) || [
+      { text: "hello", result: "aauuaauuauuuaaauuau" },
+      { text: "selamat", result: "aauuaauuuaauuaauuaauuaauu" },
+      { text: "monyet", result: "auuuuaauuaauuauauu" }
+    ];
+
+    // Statistics
+    let stats = JSON.parse(localStorage.getItem('monyetStats')) || {
+      totalConversions: 0,
+      totalCharacters: 0,
+      characterUsage: {},
+      modeUsage: { encode: 0, decode: 0 }
+    };
+
+    // Current modes
+    let conversionHistory = JSON.parse(localStorage.getItem('monyetHistory')) || [];
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show intro screen
+      const introOverlay = document.getElementById('introOverlay');
+      
+      // Hide intro after 2.5 seconds
+      setTimeout(() => {
+        introOverlay.style.opacity = '0';
+        setTimeout(() => {
+          introOverlay.style.display = 'none';
+        }, 500);
+      }, 2500);
+      
+      // Check for saved theme preference
+      if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+      }
+
+      // Load history
+      loadHistory();
+      
+      // Load templates
+      loadTemplates();
+      
+      // Load stats
+      updateStats();
+
+      // Set up event listeners
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          this.classList.add('active');
+          document.getElementById(this.dataset.tab).classList.add('active');
+        });
+      });
+
+      document.getElementById('themeToggle').addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        this.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+      
+      // Close share options when clicking outside
+      document.addEventListener('click', function(e) {
+        const shareOptions = document.getElementById('shareOptions');
+        const shareBtn = document.getElementById('shareBtn');
+        const reverseShareOptions = document.getElementById('reverseShareOptions');
+        const reverseShareBtn = document.getElementById('reverseShareBtn');
+        
+        if (!shareOptions.contains(e.target) && e.target !== shareBtn) {
+          shareOptions.classList.remove('show');
+        }
+        
+        if (!reverseShareOptions.contains(e.target) && e.target !== reverseShareBtn) {
+          reverseShareOptions.classList.remove('show');
+        }
+      });
+    });
+
+    function encodeText(text){
+      text = text.toUpperCase();
+      let out = "";
+      let mappingBreakdown = [];
+      
+      for (let ch of text){
+        if (/[A-Z]/.test(ch)){
+          out += encodeMap[ch] + " ";
+          mappingBreakdown.push(`${ch} > ${encodeMap[ch]}`);
+        } else if (ch === " ") {
+          out += "/ ";   // tanda spasi
+          mappingBreakdown.push(`spasi > /`);
+        }
+      }
+      
+      return { result: out.trim(), breakdown: mappingBreakdown };
+    }
+
+    function decodeText(text){
+      const parts = text.trim().split(/\s+/);
+      let out = "";
+      let mappingBreakdown = [];
+      
+      for (let token of parts){
+        if (token === "/") { 
+          out += " ";
+          mappingBreakdown.push(`/ > spasi`);
+          continue;
+        }
+        const char = decodeMap[token] ?? "?";
+        out += char.toLowerCase();
+        mappingBreakdown.push(`${token} > ${char}`);
+      }
+      
+      return { result: out, breakdown: mappingBreakdown };
+    }
+
+    function convert(){
+      const input = document.getElementById("inputText").value;
+      
+      if (!input) {
+        document.getElementById("output").value = "";
+        document.getElementById("charCount").textContent = "0 characters";
+        document.getElementById("copyBtn").classList.add("hidden");
+        document.getElementById("shareBtn").classList.add("hidden");
+        document.getElementById("presentBtn").classList.add("hidden");
+        document.getElementById("clearBtn").classList.add("hidden");
+        document.getElementById("mappingBreakdown").classList.add("hidden");
+        document.getElementById("translation").classList.add("hidden");
+        return;
+      }
+      
+      const encodeResult = encodeText(input);
+      const result = encodeResult.result;
+      const breakdown = encodeResult.breakdown;
+      
+      document.getElementById("output").value = result;
+      document.getElementById("charCount").textContent = `${result.length} characters`;
+      
+      // Show elements
+      document.getElementById("copyBtn").classList.remove("hidden");
+      document.getElementById("shareBtn").classList.remove("hidden");
+      document.getElementById("presentBtn").classList.remove("hidden");
+      document.getElementById("clearBtn").classList.remove("hidden");
+      document.getElementById("mappingBreakdown").classList.remove("hidden");
+      document.getElementById("translation").classList.remove("hidden");
+      
+      // Display mapping breakdown
+      document.getElementById("mappingBreakdown").innerHTML = 
+        "<strong>Rincian Konversi:</strong><br>" + breakdown.join(", ");
+      
+      // Display translation (original text)
+      document.getElementById("translationText").textContent = input;
+      
+      // Add to history
+      addToHistory(input, result, 'encode');
+      
+      // Update stats
+      updateConversionStats(input, result, 'encode');
+    }
+
+    function reverseConvert(){
+      const input = document.getElementById("reverseInput").value;
+      
+      if (!input) {
+        document.getElementById("reverseOutput").value = "";
+        document.getElementById("reverseCharCount").textContent = "0 characters";
+        document.getElementById("reverseCopyBtn").classList.add("hidden");
+        document.getElementById("reverseShareBtn").classList.add("hidden");
+        document.getElementById("reversePresentBtn").classList.add("hidden");
+        document.getElementById("reverseClearBtn").classList.add("hidden");
+        document.getElementById("reverseMappingBreakdown").classList.add("hidden");
+        document.getElementById("reverseTranslation").classList.add("hidden");
+        return;
+      }
+      
+      const decodeResult = decodeText(input);
+      const result = decodeResult.result;
+      const breakdown = decodeResult.breakdown;
+      
+      document.getElementById("reverseOutput").value = result;
+      document.getElementById("reverseCharCount").textContent = `${result.length} characters`;
+      
+      // Show elements
+      document.getElementById("reverseCopyBtn").classList.remove("hidden");
+      document.getElementById("reverseShareBtn").classList.remove("hidden");
+      document.getElementById("reversePresentBtn").classList.remove("hidden");
+      document.getElementById("reverseClearBtn").classList.remove("hidden");
+      document.getElementById("reverseMappingBreakdown").classList.remove("hidden");
+      document.getElementById("reverseTranslation").classList.remove("hidden");
+      
+      // Display mapping breakdown
+      document.getElementById("reverseMappingBreakdown").innerHTML = 
+        "<strong>Rincian Konversi:</strong><br>" + breakdown.join(", ");
+      
+      // Display translation (original text)
+      document.getElementById("reverseTranslationText").textContent = input;
+      
+      // Add to history
+      addToHistory(input, result, 'decode');
+      
+      // Update stats
+      updateConversionStats(input, result, 'decode');
+    }
+
+    function copyResult(){
+      const out = document.getElementById('output');
+      if (!out.value) return;
+      out.select();
+      document.execCommand('copy');
+      showNotification("Copied to clipboard!");
+    }
+
+    function copyReverseResult(){
+      const out = document.getElementById('reverseOutput');
+      if (!out.value) return;
+      out.select();
+      document.execCommand('copy');
+      showNotification("Copied to clipboard!");
+    }
+
+    function clearAll(){
+      document.getElementById("inputText").value = "";
+      document.getElementById("output").value = "";
+      document.getElementById("charCount").textContent = "0 characters";
+      document.getElementById("copyBtn").classList.add("hidden");
+      document.getElementById("shareBtn").classList.add("hidden");
+      document.getElementById("presentBtn").classList.add("hidden");
+      document.getElementById("clearBtn").classList.add("hidden");
+      document.getElementById("mappingBreakdown").classList.add("hidden");
+      document.getElementById("translation").classList.add("hidden");
+    }
+
+    function clearReverseAll(){
+      document.getElementById("reverseInput").value = "";
+      document.getElementById("reverseOutput").value = "";
+      document.getElementById("reverseCharCount").textContent = "0 characters";
+      document.getElementById("reverseCopyBtn").classList.add("hidden");
+      document.getElementById("reverseShareBtn").classList.add("hidden");
+      document.getElementById("reversePresentBtn").classList.add("hidden");
+      document.getElementById("reverseClearBtn").classList.add("hidden");
+      document.getElementById("reverseMappingBreakdown").classList.add("hidden");
+      document.getElementById("reverseTranslation").classList.add("hidden");
+    }
+
+    function showNotification(message) {
+      const notification = document.getElementById("notification");
+      document.getElementById("notificationText").textContent = message;
+      notification.classList.add("show");
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        notification.classList.remove("show");
+      }, 3000);
+    }
+
+    function addToHistory(original, converted, mode) {
+      // Check if this conversion already exists in history
+      const exists = conversionHistory.some(item => 
+        item.original === original && item.converted === converted && item.mode === mode
+      );
+      
+      if (!exists) {
+        conversionHistory.unshift({
+          original,
+          converted,
+          mode,
+          timestamp: new Date().toISOString()
+        });
+        
+        // Keep only the last 20 items
+        if (conversionHistory.length > 20) {
+          conversionHistory = conversionHistory.slice(0, 20);
+        }
+        
+        // Save to localStorage
+        localStorage.setItem('monyetHistory', JSON.stringify(conversionHistory));
+        
+        // Update history display
+        loadHistory();
       }
     }
-    return out.trim();
-  }
 
-  function decodeText(text){
-    const parts = text.trim().split(/\s+/);
-    let out = "";
-
-    for (let token of parts){
-      if (token === "/") { 
-        out += " ";
-        continue;
+    function loadHistory() {
+      const historyContainer = document.getElementById('historyContainer');
+      
+      if (conversionHistory.length === 0) {
+        historyContainer.innerHTML = '<p style="text-align:center; color:#666;">No history yet</p>';
+        return;
       }
-      out += decodeMap[token] ?? "?";
+      
+      historyContainer.innerHTML = '';
+      
+      conversionHistory.forEach((item, index) => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        
+        const date = new Date(item.timestamp);
+        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+        
+        historyItem.innerHTML = `
+          <div class="history-text">${item.original} (${item.mode})</div>
+          <div class="history-result">${item.converted}</div>
+          <button class="delete-history" onclick="deleteHistoryItem(${index})" title="Delete">
+            <i class="fas fa-times"></i>
+          </button>
+        `;
+        
+        historyItem.addEventListener('click', function(e) {
+          if (!e.target.closest('.delete-history')) {
+            if (item.mode === 'encode') {
+              document.getElementById('inputText').value = item.original;
+              document.getElementById('output').value = item.converted;
+              document.getElementById('charCount').textContent = `${item.converted.length} characters`;
+              document.getElementById('copyBtn').classList.remove('hidden');
+              document.getElementById('shareBtn').classList.remove('hidden');
+              document.getElementById('presentBtn').classList.remove('hidden');
+              document.getElementById('clearBtn').classList.remove('hidden');
+              document.getElementById('mappingBreakdown').classList.remove('hidden');
+              document.getElementById('translation').classList.remove('hidden');
+              document.getElementById('translationText').textContent = item.original;
+              
+              // Switch to converter tab
+              document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+              document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+              document.querySelector('[data-tab="converter"]').classList.add('active');
+              document.getElementById('converter').classList.add('active');
+            } else {
+              document.getElementById('reverseInput').value = item.original;
+              document.getElementById('reverseOutput').value = item.converted;
+              document.getElementById('reverseCharCount').textContent = `${item.converted.length} characters`;
+              document.getElementById('reverseCopyBtn').classList.remove('hidden');
+              document.getElementById('reverseShareBtn').classList.remove('hidden');
+              document.getElementById('reversePresentBtn').classList.remove('hidden');
+              document.getElementById('reverseClearBtn').classList.remove('hidden');
+              document.getElementById('reverseMappingBreakdown').classList.remove('hidden');
+              document.getElementById('reverseTranslation').classList.remove('hidden');
+              document.getElementById('reverseTranslationText').textContent = item.original;
+              
+              // Switch to reverse tab
+              document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+              document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+              document.querySelector('[data-tab="reverse"]').classList.add('active');
+              document.getElementById('reverse').classList.add('active');
+            }
+          }
+        });
+        
+        historyContainer.appendChild(historyItem);
+      });
     }
-    return out;
-  }
 
-  function run(){
-    const mode = document.getElementById("mode").value;
-    const input = document.getElementById("inputText").value;
-
-    if(mode === "encode"){
-      document.getElementById("output").value = encodeText(input);
-    } else {
-      document.getElementById("output").value = decodeText(input);
+    function deleteHistoryItem(index) {
+      conversionHistory.splice(index, 1);
+      localStorage.setItem('monyetHistory', JSON.stringify(conversionHistory));
+      loadHistory();
+      showNotification("History item deleted");
     }
-  }
 
-  function copyResult(){
-    const out = document.getElementById('output');
-    if (!out.value) return;
-    out.select();
-    document.execCommand('copy');
-    alert('Copied!');
-  }
+    function clearHistory() {
+      if (confirm('Are you sure you want to clear all history?')) {
+        conversionHistory = [];
+        localStorage.setItem('monyetHistory', JSON.stringify(conversionHistory));
+        loadHistory();
+        showNotification("History cleared");
+      }
+    }
 
-  function clearAll(){
-    document.getElementById("inputText").value = "";
-    document.getElementById("output").value = "";
-  }
-</script>
+    function exportHistory() {
+      const dataStr = JSON.stringify(conversionHistory, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = `bahasa-monyet-history-${new Date().toISOString().slice(0,10)}.json`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      showNotification("History exported!");
+    }
 
+    function toggleShareOptions() {
+      const shareOptions = document.getElementById('shareOptions');
+      shareOptions.classList.toggle('show');
+    }
+
+    function toggleReverseShareOptions() {
+      const shareOptions = document.getElementById('reverseShareOptions');
+      shareOptions.classList.toggle('show');
+    }
+
+    function shareToSocial(platform) {
+      const text = document.getElementById('inputText').value;
+      const result = document.getElementById('output').value;
+      const shareText = `"${text}" → "${result}"`;
+      
+      let url = '';
+      
+      switch(platform) {
+        case 'twitter':
+          url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+          break;
+        case 'facebook':
+          url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(shareText)}`;
+          break;
+        case 'whatsapp':
+          url = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+          break;
+      }
+      
+      if (url) {
+        window.open(url, '_blank');
+      }
+      
+      // Hide share options
+      document.getElementById('shareOptions').classList.remove('show');
+    }
+
+    function shareReverseToSocial(platform) {
+      const text = document.getElementById('reverseInput').value;
+      const result = document.getElementById('reverseOutput').value;
+      const shareText = `"${text}" → "${result}"`;
+      
+      let url = '';
+      
+      switch(platform) {
+        case 'twitter':
+          url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+          break;
+        case 'facebook':
+          url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(shareText)}`;
+          break;
+        case 'whatsapp':
+          url = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+          break;
+      }
+      
+      if (url) {
+        window.open(url, '_blank');
+      }
+      
+      // Hide share options
+      document.getElementById('reverseShareOptions').classList.remove('show');
+    }
+
+    function downloadAsFile() {
+      const text = document.getElementById('inputText').value;
+      const result = document.getElementById('output').value;
+      const content = `Original: ${text}\nConverted: ${result}`;
+      
+      const dataUri = 'data:text/plain;charset=utf-8,'+ encodeURIComponent(content);
+      
+      const exportFileDefaultName = `bahasa-monyet-${new Date().toISOString().slice(0,10)}.txt`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      // Hide share options
+      document.getElementById('shareOptions').classList.remove('show');
+      
+      showNotification("File downloaded!");
+    }
+
+    function downloadReverseAsFile() {
+      const text = document.getElementById('reverseInput').value;
+      const result = document.getElementById('reverseOutput').value;
+      const content = `Original: ${text}\nConverted: ${result}`;
+      
+      const dataUri = 'data:text/plain;charset=utf-8,'+ encodeURIComponent(content);
+      
+      const exportFileDefaultName = `bahasa-monyet-reverse-${new Date().toISOString().slice(0,10)}.txt`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      // Hide share options
+      document.getElementById('reverseShareOptions').classList.remove('show');
+      
+      showNotification("File downloaded!");
+    }
+
+    function openPresentationMode() {
+      const text = document.getElementById('inputText').value;
+      const result = document.getElementById('output').value;
+      
+      document.getElementById('presentationOutput').textContent = result;
+      document.getElementById('presentationInput').textContent = text;
+      document.getElementById('presentationMode').classList.add('active');
+    }
+
+    function closePresentationMode() {
+      document.getElementById('presentationMode').classList.remove('active');
+    }
+
+    function openReversePresentationMode() {
+      const text = document.getElementById('reverseInput').value;
+      const result = document.getElementById('reverseOutput').value;
+      
+      document.getElementById('reversePresentationOutput').textContent = result;
+      document.getElementById('reversePresentationInput').textContent = text;
+      document.getElementById('reversePresentationMode').classList.add('active');
+    }
+
+    function closeReversePresentationMode() {
+      document.getElementById('reversePresentationMode').classList.remove('active');
+    }
+
+    function loadTemplates() {
+      const templateContainer = document.getElementById('templateContainer');
+      templateContainer.innerHTML = '';
+      
+      templates.forEach((template, index) => {
+        const templateItem = document.createElement('div');
+        templateItem.className = 'template-item';
+        templateItem.innerHTML = `
+          ${template.text} <i class="fas fa-arrow-right"></i> ${template.result}
+          <i class="fas fa-times" onclick="removeTemplate(${index})" style="margin-left:5px;"></i>
+        `;
+        templateItem.onclick = function(e) {
+          if (!e.target.classList.contains('fa-times')) {
+            useTemplate(template.text);
+          }
+        };
+        templateContainer.appendChild(templateItem);
+      });
+    }
+
+    function useTemplate(text) {
+      document.getElementById('inputText').value = text;
+      convert();
+      
+      // Switch to converter tab
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelector('[data-tab="converter"]').classList.add('active');
+      document.getElementById('converter').classList.add('active');
+    }
+
+    function addTemplate() {
+      const text = document.getElementById('newTemplateText').value.trim();
+      if (!text) return;
+      
+      // Convert the text using encode mode
+      const result = encodeText(text).result;
+      
+      templates.push({ text, result });
+      localStorage.setItem('monyetTemplates', JSON.stringify(templates));
+      
+      document.getElementById('newTemplateText').value = '';
+      loadTemplates();
+      
+      showNotification("Template added!");
+    }
+
+    function removeTemplate(index) {
+      templates.splice(index, 1);
+      localStorage.setItem('monyetTemplates', JSON.stringify(templates));
+      loadTemplates();
+      showNotification("Template removed!");
+    }
+
+    function updateConversionStats(text, result, mode) {
+      stats.totalConversions++;
+      stats.totalCharacters += text.length;
+      stats.modeUsage[mode]++;
+      
+      // Update character usage
+      for (const char of text.toLowerCase()) {
+        if (!stats.characterUsage[char]) {
+          stats.characterUsage[char] = 0;
+        }
+        stats.characterUsage[char]++;
+      }
+      
+      // Save stats
+      localStorage.setItem('monyetStats', JSON.stringify(stats));
+      
+      // Update display
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById('totalConversions').textContent = stats.totalConversions;
+      document.getElementById('totalCharacters').textContent = stats.totalCharacters;
+      
+      // Find most used character
+      let mostUsedChar = '-';
+      let maxUsage = 0;
+      for (const char in stats.characterUsage) {
+        if (stats.characterUsage[char] > maxUsage) {
+          maxUsage = stats.characterUsage[char];
+          mostUsedChar = char;
+        }
+      }
+      document.getElementById('mostUsedChar').textContent = mostUsedChar;
+      
+      // Find favorite mode
+      let favoriteMode = 'Encode';
+      let maxModeUsage = 0;
+      for (const mode in stats.modeUsage) {
+        if (stats.modeUsage[mode] > maxModeUsage) {
+          maxModeUsage = stats.modeUsage[mode];
+          favoriteMode = mode.charAt(0).toUpperCase() + mode.slice(1);
+        }
+      }
+      document.getElementById('favoriteMode').textContent = favoriteMode;
+    }
+  </script>
 </body>
 </html>
