@@ -23,49 +23,58 @@
   <button onclick="clearAll()">Clear</button>
 
 <script>
-  // ===== SETS UNTUK ENCODE =====
-  const vowels = new Set(['a','e','i','o','u']);
-  const hard = new Set(['k','g','p','t','b','d','q']);
-  const soft = new Set(['m','n','s','l','r','h']);
+  // MAP HURUF → KODE
+  const encodeMap = {
+    A:"aaaaa", B:"aaaau", C:"aaaua", D:"aaauu",
+    E:"aauaa", F:"aauau", G:"aauua", H:"aauuu",
+    I:"auaaa", J:"auaau", K:"auaua", L:"auauu",
+    M:"auuaa", N:"auuau", O:"auuua", P:"auuuu",
+    Q:"uaaaa", R:"uaaau", S:"uaaua", T:"uaauu",
+    U:"uauaa", V:"uauau", W:"uauua", X:"uauuu",
+    Y:"uuaaa", Z:"uuaau"
+  };
 
-  function encodeChar(ch){
-    if (ch === ' ') return 'u';  // space
-    if (!/[a-z]/.test(ch)) return ch;
-    if (vowels.has(ch)) return 'aa';
-    if (soft.has(ch)) return 'u';
-    if (hard.has(ch)) return 'a';
-    return 'a';
+  // Buat MAP kebalikan: KODE → HURUF
+  const decodeMap = {};
+  for (const [char, code] of Object.entries(encodeMap)) {
+    decodeMap[code] = char;
   }
 
-  function encodeMonkey(text){
-    text = text.toLowerCase();
-    return text.split('').map(encodeChar).join(' ');
+  function encodeText(text){
+    text = text.toUpperCase();
+    let out = "";
+    for (let ch of text){
+      if (/[A-Z]/.test(ch)){
+        out += encodeMap[ch] + " ";
+      } else if (ch === " ") {
+        out += "/ ";   // tanda spasi
+      }
+    }
+    return out.trim();
   }
 
-  // ===== DECODE (Monyet → Text Normal) =====
-  function decodeMonkey(text){
+  function decodeText(text){
     const parts = text.trim().split(/\s+/);
-    let result = "";
+    let out = "";
 
     for (let token of parts){
-      if (token === "aa") result += "a";
-      else if (token === "u") result += " ";
-      else if (token === "a") result += "k";
-      else result += "?";
+      if (token === "/") { 
+        out += " ";
+        continue;
+      }
+      out += decodeMap[token] ?? "?";
     }
-
-    return result;
+    return out;
   }
 
-  // ===== MAIN SWITCH =====
   function run(){
     const mode = document.getElementById("mode").value;
     const input = document.getElementById("inputText").value;
 
     if(mode === "encode"){
-      document.getElementById("output").value = encodeMonkey(input);
+      document.getElementById("output").value = encodeText(input);
     } else {
-      document.getElementById("output").value = decodeMonkey(input);
+      document.getElementById("output").value = decodeText(input);
     }
   }
 
