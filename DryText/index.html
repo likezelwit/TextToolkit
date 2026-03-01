@@ -5,22 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dry Text Improved</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Hubungkan ke CSS Utama (style.css di folder sebelumnya) -->
+  <!-- Hubungkan ke CSS Utama -->
   <link rel="stylesheet" href="../style.css">
   
   <style>
-    /* Style khusus untuk halaman Dry Text (menimpa/menambah style.css) */
-    
-    /* Penyesuaian Body agar tidak bentrok dengan Header Sticky */
+    /* Style Dasar Body */
     body {
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
       padding: 0;
-      padding-top: 80px; /* Ruang untuk header */
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transition: var(--transition);
+    }
+    body.dark-mode {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     }
 
-    /* Kontainer Utama Dry Text */
+    /* === FLOATING TOKEN BAR (Pengganti Header Besar) === */
+    .floating-bar {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 8px 15px;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      z-index: 1000;
+      transition: var(--transition);
+    }
+    body.dark-mode .floating-bar {
+      background: rgba(30, 30, 46, 0.95);
+    }
+
+    /* Back Button */
+    .back-btn {
+      text-decoration: none;
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-right: 10px;
+      padding-right: 10px;
+      border-right: 1px solid #ddd;
+    }
+    body.dark-mode .back-btn { border-color: rgba(255,255,255,0.2); color: var(--success-color); }
+    .back-btn:hover { opacity: 0.8; }
+
+    /* Token Display Compact */
+    .token-display-compact {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    body.dark-mode .token-display-compact { color: var(--success-color); }
+    
+    /* Sembunyikan elemen navigasi besar tapi pertahankan ID untuk JS */
+    #navLinks {
+      display: none; /* Sembunyikan menu navigasi */
+    }
+    .mobile-menu-toggle {
+      display: none; /* Sembunyikan hamburger menu */
+    }
+    /* Pastikan User Menu tampil benar di bar kecil */
+    #loginContainer {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .login-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 20px;
+    }
+    .user-menu {
+      position: relative;
+    }
+    .user-dropdown {
+      top: 45px;
+      right: 0;
+      width: 150px;
+    }
+
+    /* Kontainer Utama */
     .container {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
@@ -29,28 +107,24 @@
       max-width: 600px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
       padding: 25px;
-      margin: 20px;
+      margin: 80px 20px 20px 20px; /* Margin atas untuk floating bar */
       transition: var(--transition);
       position: relative;
       overflow: hidden;
     }
-
     body.dark-mode .container {
       background: rgba(30, 30, 46, 0.95);
       color: #f8f9fa;
     }
-
     .container::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 5px;
       background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
     }
 
-    /* Header di dalam kontainer (Judul Halaman) */
+    /* Header Halaman (Judul) */
     .page-header {
       display: flex;
       justify-content: space-between;
@@ -60,20 +134,9 @@
       padding-bottom: 10px;
     }
     body.dark-mode .page-header { border-color: rgba(255,255,255,0.1); }
-
-    h2 {
-      color: var(--primary-color);
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0;
-    }
+    h2 { color: var(--primary-color); font-size: 24px; font-weight: 700; margin: 0; }
     body.dark-mode h2 { color: var(--success-color); }
-
-    .subtitle {
-      font-size: 13px;
-      color: var(--gray-color);
-      margin-top: 5px;
-    }
+    .subtitle { font-size: 13px; color: var(--gray-color); margin-top: 5px; }
 
     /* Style Elemen Form */
     .input-group { margin-bottom: 15px; }
@@ -101,7 +164,8 @@
       display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     .primary-btn { background: var(--primary-color); color: white; flex: 1; }
-    .primary-btn:hover { background: var(--secondary-color); }
+    .secondary-btn { background: var(--light-color); color: var(--dark-color); }
+    body.dark-mode .secondary-btn { background: rgba(255, 255, 255, 0.1); color: #f8f9fa; }
     .copy-btn { background: var(--success-color); color: var(--dark-color); }
     .clear-btn { background: var(--danger-color); color: white; }
     .share-btn { background: var(--accent-color); color: white; }
@@ -120,28 +184,20 @@
     .intro-icon { font-size: 50px; margin-bottom: 20px; color: var(--success-color); }
     .intro-progress { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; overflow: hidden; margin-top: 20px; }
     .intro-progress-bar { height: 100%; background: var(--success-color); width: 0; animation: progressAnimation 2s ease forwards; }
-
     @keyframes fadeInScale { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
     @keyframes progressAnimation { to { width: 100%; } }
 
     /* Tabs & Others */
     .tabs { display: flex; margin-bottom: 15px; border-bottom: 1px solid #ddd; }
     body.dark-mode .tabs { border-color: rgba(255, 255, 255, 0.2); }
-    .tab {
-      padding: 8px 12px; cursor: pointer; font-weight: 600; color: var(--gray-color);
-      border-bottom: 2px solid transparent; transition: var(--transition); font-size: 14px;
-    }
+    .tab { padding: 8px 12px; cursor: pointer; font-weight: 600; color: var(--gray-color); border-bottom: 2px solid transparent; transition: var(--transition); font-size: 14px; }
     .tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
     body.dark-mode .tab.active { color: var(--success-color); border-bottom-color: var(--success-color); }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
     .history-container { max-height: 200px; overflow-y: auto; margin-top: 12px; }
-    .history-item {
-      padding: 10px; border-radius: var(--border-radius); margin-bottom: 8px;
-      background: var(--light-color); cursor: pointer; transition: var(--transition);
-      display: flex; justify-content: space-between; align-items: center;
-    }
+    .history-item { padding: 10px; border-radius: var(--border-radius); margin-bottom: 8px; background: var(--light-color); cursor: pointer; transition: var(--transition); display: flex; justify-content: space-between; align-items: center; }
     body.dark-mode .history-item { background: rgba(255, 255, 255, 0.1); }
     .history-item:hover { transform: translateX(5px); background: #e9ecef; }
     body.dark-mode .history-item:hover { background: rgba(255, 255, 255, 0.2); }
@@ -151,10 +207,7 @@
     .delete-history { background: none; border: none; color: var(--danger-color); cursor: pointer; padding: 5px; margin-left: 8px; }
 
     .mode-selector { display: flex; gap: 8px; margin-bottom: 12px; }
-    .mode-option {
-      flex: 1; padding: 8px; text-align: center; border-radius: var(--border-radius);
-      background: var(--light-color); cursor: pointer; transition: var(--transition); font-size: 13px;
-    }
+    .mode-option { flex: 1; padding: 8px; text-align: center; border-radius: var(--border-radius); background: var(--light-color); cursor: pointer; transition: var(--transition); font-size: 13px; }
     .mode-option.active { background: var(--primary-color); color: white; }
     body.dark-mode .mode-option { background: rgba(255, 255, 255, 0.1); }
     body.dark-mode .mode-option.active { background: var(--success-color); color: var(--dark-color); }
@@ -165,10 +218,7 @@
     body.dark-mode .info-title { color: var(--success-color); }
 
     .template-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    .template-item {
-      padding: 6px 10px; background: var(--light-color); border-radius: 20px;
-      font-size: 12px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 5px;
-    }
+    .template-item { padding: 6px 10px; background: var(--light-color); border-radius: 20px; font-size: 12px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 5px; }
     body.dark-mode .template-item { background: rgba(255, 255, 255, 0.1); }
     .template-item:hover { background: var(--primary-color); color: white; }
 
@@ -179,22 +229,14 @@
     body.dark-mode .stat-value { color: var(--success-color); }
     .stat-label { font-size: 11px; color: var(--gray-color); margin-top: 3px; }
 
-    .share-options {
-      position: absolute; top: 100%; right: 0; background: white;
-      border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      padding: 10px; z-index: 100; display: none;
-    }
+    .share-options { position: absolute; top: 100%; right: 0; background: white; border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); padding: 10px; z-index: 100; display: none; }
     body.dark-mode .share-options { background: var(--dark-color); }
     .share-options.show { display: block; }
     .share-option { display: flex; align-items: center; gap: 8px; padding: 8px; cursor: pointer; border-radius: 6px; transition: var(--transition); }
     .share-option:hover { background: var(--light-color); }
     body.dark-mode .share-option:hover { background: rgba(255, 255, 255, 0.1); }
 
-    .presentation-mode {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: var(--dark-color); color: white; display: none;
-      flex-direction: column; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
-    }
+    .presentation-mode { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-color); color: white; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
     .presentation-mode.active { display: flex; }
     .presentation-content { max-width: 800px; width: 100%; text-align: center; }
     .presentation-output { font-size: 3rem; margin-bottom: 20px; word-break: break-all; }
@@ -203,8 +245,15 @@
 
     /* Penyesuaian Mobile */
     @media (max-width: 768px) {
-      body { padding-top: 70px; }
-      .container { margin: 10px; padding: 15px; }
+      .floating-bar {
+        top: 10px;
+        right: 10px;
+        padding: 6px 10px;
+      }
+      .back-btn span { display: none; } /* Sembunyikan teks di mobile */
+      .back-btn { margin-right: 5px; padding-right: 5px; }
+      
+      .container { margin: 70px 10px 20px 10px; padding: 15px; }
       .stats-container { grid-template-columns: 1fr; }
     }
   </style>
@@ -221,47 +270,42 @@
     </div>
   </div>
 
-  <!-- Header Navigation (Wajib ada untuk Token & Login) -->
-  <header>
-    <nav>
-      <a href="../index.html" class="logo">
-        <i class="fas fa-magic"></i> Text Converter
-      </a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="../index.html#home">Home</a></li>
-        <li><a href="../index.html#features">Features</a></li>
-        <li><a href="../index.html#faq">FAQ</a></li>
-        <li>
-          <div class="token-display">
-            <i class="fas fa-coins token-icon"></i>
-            <span class="token-count" id="tokenCount">50</span>
-            <span class="token-reset" id="tokenReset">3:00:00</span>
-          </div>
-        </li>
-        <li>
-          <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
-            <i class="fas fa-moon"></i>
-          </button>
-        </li>
-        <li id="loginContainer">
-          <button class="login-btn" id="loginBtn" onclick="openLoginModal()">
-            <i class="fas fa-sign-in-alt"></i> Login
-          </button>
-          <div class="user-menu" id="userMenu" style="display: none;">
-            <div class="user-avatar" id="userAvatar" onclick="toggleUserDropdown()">U</div>
-            <div class="user-dropdown" id="userDropdown">
-              <a href="#"><i class="fas fa-user"></i> Profile</a>
-              <a href="#"><i class="fas fa-cog"></i> Settings</a>
-              <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <button class="mobile-menu-toggle" id="mobileMenuToggle">
-        <i class="fas fa-bars"></i>
+  <!-- Floating Token Bar (Pengganti Header) -->
+  <div class="floating-bar">
+    <a href="../index.html" class="back-btn"><i class="fas fa-arrow-left"></i> <span>Home</span></a>
+    
+    <!-- Elemen ini diperlukan script.js, jadi kita pertahankan tapi sembunyikan/hide jika perlu. 
+         Tapi untuk UX, kita tampilkan Token di sini. -->
+    <div class="token-display-compact">
+      <i class="fas fa-coins"></i>
+      <span id="tokenCount">50</span>
+      <span id="tokenReset" style="font-size:10px; opacity:0.7;">3:00</span>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+      <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Login/User -->
+    <div id="loginContainer">
+      <button class="login-btn" id="loginBtn" onclick="openLoginModal()">
+        <i class="fas fa-sign-in-alt"></i> Login
       </button>
-    </nav>
-  </header>
+      <div class="user-menu" id="userMenu" style="display: none;">
+        <div class="user-avatar" id="userAvatar" onclick="toggleUserDropdown()">U</div>
+        <div class="user-dropdown" id="userDropdown">
+          <a href="#"><i class="fas fa-user"></i> Profile</a>
+          <a href="#"><i class="fas fa-cog"></i> Settings</a>
+          <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden elements for script.js compatibility -->
+    <ul class="nav-links" id="navLinks" style="display:none;"></ul>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" style="display:none;"></button>
+  </div>
 
   <!-- Konten Utama Dry Text -->
   <div class="container">
@@ -270,7 +314,6 @@
         <h2>Dry Text Tool</h2>
         <p class="subtitle">Hapus vokal, simpan vokal pertama.</p>
       </div>
-      <!-- Tombol theme toggle di header utama sudah cukup -->
     </div>
 
     <div class="tabs">
@@ -360,7 +403,63 @@
     </div>
   </div>
 
-  <!-- Login Modal (Wajib ada) -->
+  <!-- Footer -->
+  <footer id="contact" style="margin-top: 20px; width: 100%;">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Us</h3>
+        <p>We provide powerful text conversion tools to help you transform your text in creative ways. Our tools are designed to be simple, fast, and effective.</p>
+        <div class="social-links">
+          <a href="https://facebook.com" target="_blank" class="social-link"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://twitter.com" target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
+          <a href="https://instagram.com" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+          <a href="https://github.com" target="_blank" class="social-link"><i class="fab fa-github"></i></a>
+          <a href="https://linkedin.com" target="_blank" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="../index.html#home">Home</a></li>
+          <li><a href="../index.html#features">Features</a></li>
+          <li><a href="../index.html#faq">FAQ</a></li>
+          <!-- Updated Footer Links with ../ -->
+          <li><a href="../TextToNumber/index.html">Text to Number</a></li>
+          <li><a href="../Text-G/index.html">Language G</a></li>
+          <li><a href="../DryText/index.html">Dry Text</a></li>
+          <li><a href="../TextLong/index.html">Long Text</a></li>
+          <li><a href="../TextMonkey/index.html">Monkey Text</a></li>
+          <li><a href="../CatText/index.html">CatText</a></li>
+          <li><a href="../AlienText/index.html">AlienText</a></li>
+          <li><a href="../HackerText/index.html">HacKerTEXT</a></li>
+          <li><a href="../Statistik-Teks/index.html">Statistik & Analisis Teks</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3>Contact Info</h3>
+        <p><i class="fas fa-envelope"></i> info@textconverter.com</p>
+        <p><i class="fas fa-phone"></i> +62 812-3456-7890</p>
+        <p><i class="fas fa-map-marker-alt"></i> Jakarta, Indonesia</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Newsletter</h3>
+        <p>Subscribe to get updates on new features and tools</p>
+        <form onsubmit="subscribeNewsletter(event)" style="margin-top: 15px;">
+          <input type="email" placeholder="Your email" required style="padding: 10px; border-radius: 8px; border: none; width: 100%; margin-bottom: 10px;">
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2024 Text Converter. All rights reserved. Made with <i class="fas fa-heart" style="color: var(--danger-color);"></i> in Indonesia</p>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
   <div class="modal" id="loginModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeLoginModal()"><i class="fas fa-times"></i></button>
@@ -414,7 +513,7 @@
   <!-- Hubungkan ke Script Utama -->
   <script src="../script.js"></script>
 
-  <!-- Script Khusus Dry Text (Fitur Tetap Utuh) -->
+  <!-- Script Khusus Dry Text -->
   <script>
     // Variabel lokal Dry Text
     let templates = JSON.parse(localStorage.getItem('dryTemplates')) || [
@@ -439,7 +538,6 @@
         }
       }, 2500);
 
-      // Load Data
       loadHistory();
       loadTemplates();
       updateStats();
@@ -521,7 +619,6 @@
       const output = document.getElementById("output");
       output.select();
       document.execCommand("copy");
-      // Menggunakan fungsi showNotification dari script.js utama jika ada, atau buat lokal
       if(typeof showNotification === 'function') showNotification("Copied!");
       else {
           const n = document.getElementById("notification");
@@ -533,7 +630,7 @@
     
     function clearText() {
       document.getElementById("inputText").value = "";
-      runDry(); // Ini akan menyembunyikan tombol karena text kosong
+      runDry();
     }
     
     // History Functions
@@ -564,7 +661,6 @@
         const item = conversionHistory[index];
         document.getElementById('inputText').value = item.original;
         runDry();
-        // Switch to converter tab
         document.querySelector('[data-tab="converter"]').click();
     }
     
@@ -662,7 +758,6 @@
       document.getElementById('totalConversions').textContent = stats.totalConversions;
       document.getElementById('totalCharacters').textContent = stats.totalCharacters;
       document.getElementById('vowelsRemoved').textContent = stats.vowelsRemoved;
-      // Find favorite mode
       const favorite = Object.keys(stats.modeUsage).reduce((a, b) => stats.modeUsage[a] > stats.modeUsage[b] ? a : b);
       document.getElementById('favoriteMode').textContent = favorite.charAt(0).toUpperCase() + favorite.slice(1);
     }
