@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bahasa Kucing (CatText)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Hubungkan ke CSS Utama -->
+  <link rel="stylesheet" href="../style.css">
+  
+  <style>
+    /* Style Dasar Body */
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transition: var(--transition);
+    }
+    body.dark-mode {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    /* === FLOATING TOKEN BAR === */
+    .floating-bar {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 8px 15px;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      z-index: 1000;
+      transition: var(--transition);
+    }
+    body.dark-mode .floating-bar {
+      background: rgba(30, 30, 46, 0.95);
+    }
+
+    .back-btn {
+      text-decoration: none;
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-right: 10px;
+      padding-right: 10px;
+      border-right: 1px solid #ddd;
+    }
+    body.dark-mode .back-btn { border-color: rgba(255,255,255,0.2); color: var(--success-color); }
+    .back-btn:hover { opacity: 0.8; }
+
+    .token-display-compact {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    body.dark-mode .token-display-compact { color: var(--success-color); }
+    
+    #navLinks, .mobile-menu-toggle { display: none; }
+    
+    #loginContainer { position: relative; display: flex; align-items: center; }
+    .login-btn { padding: 6px 12px; font-size: 12px; border-radius: 20px; }
+    .user-menu { position: relative; }
+    .user-dropdown { top: 45px; right: 0; width: 150px; }
+
+    /* Kontainer Utama */
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      margin: 80px 20px 20px 20px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    body.dark-mode .container {
+      background: rgba(30, 30, 46, 0.95);
+      color: #f8f9fa;
+    }
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    body.dark-mode .page-header { border-color: rgba(255,255,255,0.1); }
+    h2 { color: var(--primary-color); font-size: 24px; font-weight: 700; margin: 0; }
+    body.dark-mode h2 { color: var(--success-color); }
+    .subtitle { font-size: 13px; color: var(--gray-color); margin-top: 5px; }
+
+    /* Form Elements */
+    .input-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; }
+    body.dark-mode label { color: #f8f9fa; }
+    
+    input, textarea, select {
+      width: 100%; padding: 10px 12px; border-radius: var(--border-radius);
+      border: 1px solid #ddd; font-size: 15px; transition: var(--transition);
+      background-color: #fff; color: var(--dark-color);
+    }
+    body.dark-mode input, body.dark-mode textarea, body.dark-mode select {
+      background-color: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); color: #f8f9fa;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* Buttons */
+    .button-group { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    button {
+      padding: 10px 15px; border: none; border-radius: var(--border-radius);
+      font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .primary-btn { background: var(--primary-color); color: white; flex: 1; }
+    .primary-btn:hover { background: var(--secondary-color); transform: translateY(-2px); }
+    .secondary-btn { background: var(--light-color); color: var(--dark-color); }
+    body.dark-mode .secondary-btn { background: rgba(255, 255, 255, 0.1); color: #f8f9fa; }
+    .copy-btn { background: var(--success-color); color: var(--dark-color); }
+    .clear-btn { background: var(--danger-color); color: white; }
+    .share-btn { background: var(--accent-color); color: white; }
+    .hidden { display: none !important; }
+
+    /* Intro Screen */
+    .intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s ease; }
+    body.dark-mode .intro-overlay { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+    .intro-content { text-align: center; color: white; padding: 30px; max-width: 80%; animation: fadeInScale 0.8s ease; }
+    .intro-title { font-size: 28px; margin-bottom: 15px; font-weight: 700; }
+    .intro-icon { font-size: 50px; margin-bottom: 20px; color: var(--success-color); }
+    .intro-progress { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; overflow: hidden; margin-top: 20px; }
+    .intro-progress-bar { height: 100%; background: var(--success-color); width: 0; animation: progressAnimation 2s ease forwards; }
+    @keyframes fadeInScale { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+    @keyframes progressAnimation { to { width: 100%; } }
+
+    /* Tabs & Components */
+    .tabs { display: flex; margin-bottom: 15px; border-bottom: 1px solid #ddd; overflow-x: auto; }
+    body.dark-mode .tabs { border-color: rgba(255, 255, 255, 0.2); }
+    .tab { padding: 8px 12px; cursor: pointer; font-weight: 600; color: var(--gray-color); border-bottom: 2px solid transparent; transition: var(--transition); font-size: 14px; white-space: nowrap; }
+    .tab.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+    body.dark-mode .tab.active { color: var(--success-color); border-bottom-color: var(--success-color); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .result-container { position: relative; margin-bottom: 15px; }
+    .char-count { position: absolute; bottom: -18px; right: 0; font-size: 11px; color: var(--gray-color); }
+    .mapping-breakdown { background: var(--light-color); padding: 12px; border-radius: var(--border-radius); margin-top: 15px; font-size: 13px; border-left: 4px solid var(--primary-color); }
+    body.dark-mode .mapping-breakdown { background: rgba(255, 255, 255, 0.1); color: #f8f9fa; }
+    .translation { background: rgba(67, 97, 238, 0.1); padding: 12px; border-radius: var(--border-radius); margin-top: 15px; font-size: 13px; border-left: 4px solid var(--accent-color); }
+    body.dark-mode .translation { background: rgba(247, 37, 133, 0.1); color: #f8f9fa; }
+
+    .history-container { max-height: 200px; overflow-y: auto; margin-top: 12px; }
+    .history-item { padding: 10px; border-radius: var(--border-radius); margin-bottom: 8px; background: var(--light-color); cursor: pointer; transition: var(--transition); display: flex; justify-content: space-between; align-items: center; }
+    body.dark-mode .history-item { background: rgba(255, 255, 255, 0.1); }
+    .history-item:hover { transform: translateX(5px); background: #e9ecef; }
+    .history-text { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+    .history-result { font-weight: 600; color: var(--primary-color); margin-left: 8px; font-size: 14px; }
+    body.dark-mode .history-result { color: var(--success-color); }
+    .delete-history { background: none; border: none; color: var(--danger-color); cursor: pointer; padding: 5px; margin-left: 8px; }
+
+    .info-section { background: rgba(67, 97, 238, 0.05); padding: 12px; border-radius: var(--border-radius); margin-top: 15px; font-size: 13px; }
+    body.dark-mode .info-section { background: rgba(255, 255, 255, 0.05); color: #f8f9fa; }
+    .info-title { font-weight: 600; margin-bottom: 8px; color: var(--primary-color); font-size: 14px; }
+    body.dark-mode .info-title { color: var(--success-color); }
+
+    .template-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .template-item { padding: 6px 10px; background: var(--light-color); border-radius: 20px; font-size: 12px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 5px; }
+    body.dark-mode .template-item { background: rgba(255, 255, 255, 0.1); }
+    .template-item:hover { background: var(--primary-color); color: white; }
+
+    .stats-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+    .stat-card { background: var(--light-color); padding: 10px; border-radius: var(--border-radius); text-align: center; }
+    body.dark-mode .stat-card { background: rgba(255, 255, 255, 0.1); }
+    .stat-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+    body.dark-mode .stat-value { color: var(--success-color); }
+    .stat-label { font-size: 11px; color: var(--gray-color); margin-top: 3px; }
+
+    /* Confirmation Modal */
+    .confirm-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 2000; }
+    .confirm-modal.active { display: flex; }
+    .confirm-content { background: white; border-radius: var(--border-radius); padding: 25px; width: 90%; max-width: 400px; text-align: center; animation: modalFadeIn 0.3s ease; }
+    body.dark-mode .confirm-content { background: rgba(30, 30, 46, 0.95); color: #f8f9fa; }
+    @keyframes modalFadeIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    .confirm-title { font-size: 20px; margin-bottom: 15px; color: var(--primary-color); }
+    body.dark-mode .confirm-title { color: var(--success-color); }
+    .confirm-message { margin-bottom: 20px; font-size: 16px; }
+    .confirm-token-cost { font-size: 18px; font-weight: 700; color: var(--warning-color); margin: 10px 0; }
+    .confirm-buttons { display: flex; gap: 10px; justify-content: center; }
+
+    .share-options { position: absolute; top: 100%; right: 0; background: white; border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); padding: 10px; z-index: 100; display: none; }
+    body.dark-mode .share-options { background: var(--dark-color); }
+    .share-options.show { display: block; }
+    .share-option { display: flex; align-items: center; gap: 8px; padding: 8px; cursor: pointer; border-radius: 6px; transition: var(--transition); }
+    .share-option:hover { background: var(--light-color); }
+    body.dark-mode .share-option:hover { background: rgba(255, 255, 255, 0.1); }
+
+    .presentation-mode { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-color); color: white; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
+    .presentation-mode.active { display: flex; }
+    .presentation-content { max-width: 800px; width: 100%; text-align: center; }
+    .presentation-output { font-size: 3rem; margin-bottom: 20px; word-break: break-all; }
+    .presentation-input { font-size: 1.5rem; margin-bottom: 30px; opacity: 0.8; }
+    .presentation-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+
+    @media (max-width: 768px) {
+      .floating-bar { top: 10px; right: 10px; padding: 6px 10px; }
+      .back-btn span { display: none; }
+      .back-btn { margin-right: 5px; padding-right: 5px; }
+      .container { margin: 70px 10px 20px 10px; padding: 15px; }
+      .stats-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Intro Screen -->
+  <div class="intro-overlay" id="introOverlay">
+    <div class="intro-content">
+      <div class="intro-icon"><i class="fas fa-cat"></i></div>
+      <h1 class="intro-title">Welcome to CatText!</h1>
+      <p class="intro-subtitle">Mengubah teks menjadi Bahasa Kucing (Meow Code).</p>
+      <div class="intro-progress"><div class="intro-progress-bar"></div></div>
+    </div>
+  </div>
+
+  <!-- Floating Token Bar -->
+  <div class="floating-bar">
+    <a href="../index.html" class="back-btn"><i class="fas fa-arrow-left"></i> <span>Home</span></a>
+    
+    <div class="token-display-compact">
+      <i class="fas fa-coins"></i>
+      <span id="tokenCount">50</span>
+      <span id="tokenReset" style="font-size:10px; opacity:0.7;">3:00</span>
+    </div>
+
+    <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+      <i class="fas fa-moon"></i>
+    </button>
+
+    <div id="loginContainer">
+      <button class="login-btn" id="loginBtn" onclick="openLoginModal()">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </button>
+      <div class="user-menu" id="userMenu" style="display: none;">
+        <div class="user-avatar" id="userAvatar" onclick="toggleUserDropdown()">U</div>
+        <div class="user-dropdown" id="userDropdown">
+          <a href="#"><i class="fas fa-user"></i> Profile</a>
+          <a href="#"><i class="fas fa-cog"></i> Settings</a>
+          <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+    
+    <ul class="nav-links" id="navLinks" style="display:none;"></ul>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" style="display:none;"></button>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h2>CatText Converter</h2>
+        <p class="subtitle">Encode & Decode teks kucing.</p>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="converter">Converter</div>
+      <div class="tab" data-tab="reverse">Reverse</div>
+      <div class="tab" data-tab="history">History</div>
+      <div class="tab" data-tab="templates">Templates</div>
+      <div class="tab" data-tab="stats">Stats</div>
+    </div>
+
+    <!-- ENCODE TAB -->
+    <div class="tab-content active" id="converter">
+      <div class="input-group">
+        <label for="inputText">Enter text:</label>
+        <textarea id="inputText" rows="3" placeholder="Type here..."></textarea>
+        <p style="font-size:12px;color:#666;margin-top:4px;">Contoh: hello world...</p>
+        <button class="primary-btn" onclick="showConfirmModal()" style="margin-top:10px;">
+          <i class="fas fa-magic"></i> Generate
+        </button>
+      </div>
+
+      <div class="input-group">
+        <label for="output">Result:</label>
+        <div class="result-container">
+          <textarea id="output" rows="4" readonly></textarea>
+          <div class="char-count" id="charCount">0 characters</div>
+        </div>
+        <div class="button-group">
+          <button id="copyBtn" class="copy-btn hidden" onclick="copyResult()"><i class="fas fa-copy"></i> Copy</button>
+          <button id="shareBtn" class="share-btn hidden" onclick="toggleShareOptions()"><i class="fas fa-share"></i> Share</button>
+          <button id="presentBtn" class="secondary-btn hidden" onclick="openPresentationMode()"><i class="fas fa-expand"></i> Present</button>
+          <button id="clearBtn" class="clear-btn hidden" onclick="clearAll()"><i class="fas fa-trash"></i> Clear</button>
+        </div>
+        <div class="share-options" id="shareOptions">
+          <div class="share-option" onclick="shareToSocial('twitter')"><i class="fab fa-twitter"></i> Twitter</div>
+          <div class="share-option" onclick="shareToSocial('facebook')"><i class="fab fa-facebook"></i> Facebook</div>
+          <div class="share-option" onclick="shareToSocial('whatsapp')"><i class="fab fa-whatsapp"></i> WhatsApp</div>
+          <div class="share-option" onclick="downloadAsFile()"><i class="fas fa-download"></i> Download</div>
+        </div>
+      </div>
+
+      <div id="mappingBreakdown" class="mapping-breakdown hidden"></div>
+      <div id="translation" class="translation hidden"><strong>Original:</strong><div id="translationText"></div></div>
+    </div>
+
+    <!-- DECODE TAB -->
+    <div class="tab-content" id="reverse">
+      <div class="input-group">
+        <label for="reverseInput">Enter meow code:</label>
+        <textarea id="reverseInput" rows="3" oninput="reverseConvert()" placeholder="Paste meow code here..."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label for="reverseOutput">Result:</label>
+        <div class="result-container">
+          <textarea id="reverseOutput" rows="4" readonly></textarea>
+          <div class="char-count" id="reverseCharCount">0 characters</div>
+        </div>
+        <div class="button-group">
+          <button id="reverseCopyBtn" class="copy-btn hidden" onclick="copyReverseResult()"><i class="fas fa-copy"></i> Copy</button>
+          <button id="reverseClearBtn" class="clear-btn hidden" onclick="clearReverseAll()"><i class="fas fa-trash"></i> Clear</button>
+        </div>
+      </div>
+      <div id="reverseMappingBreakdown" class="mapping-breakdown hidden"></div>
+    </div>
+
+    <!-- OTHER TABS (History, Templates, Stats) -->
+    <div class="tab-content" id="history">
+      <div class="button-group">
+        <button class="clear-btn" onclick="clearHistory()"><i class="fas fa-trash"></i> Clear</button>
+        <button class="secondary-btn" onclick="exportHistory()"><i class="fas fa-download"></i> Export</button>
+      </div>
+      <div class="history-container" id="historyContainer"></div>
+    </div>
+
+    <div class="tab-content" id="templates">
+      <div class="input-group">
+        <label>Quick Templates:</label>
+        <div class="template-container" id="templateContainer"></div>
+      </div>
+      <div class="input-group">
+        <label>Add New Template:</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="newTemplateText" placeholder="Text" style="flex:1">
+          <button class="primary-btn" onclick="addTemplate()" style="flex:0 0 auto;"><i class="fas fa-plus"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="stats">
+      <div class="stats-container">
+        <div class="stat-card"><div class="stat-value" id="totalConversions">0</div><div class="stat-label">Conversions</div></div>
+        <div class="stat-card"><div class="stat-value" id="totalCharacters">0</div><div class="stat-label">Characters</div></div>
+        <div class="stat-card"><div class="stat-value" id="mostUsedChar">-</div><div class="stat-label">Most Used</div></div>
+        <div class="stat-card"><div class="stat-value" id="favoriteMode">Encode</div><div class="stat-label">Favorite Mode</div></div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-title">Tentang CatText:</div>
+      <div>Mengubah huruf menjadi kombinasi suara kucing (m, e, o, w).<br>A=mmeow, B=mmeom, dll. Spasi = " / ".</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer id="contact" style="margin-top: 20px; width: 100%;">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Us</h3>
+        <p>We provide powerful text conversion tools to help you transform your text in creative ways. Our tools are designed to be simple, fast, and effective.</p>
+        <div class="social-links">
+          <a href="https://facebook.com" target="_blank" class="social-link"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://twitter.com" target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
+          <a href="https://instagram.com" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+          <a href="https://github.com" target="_blank" class="social-link"><i class="fab fa-github"></i></a>
+          <a href="https://linkedin.com" target="_blank" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="../index.html#home">Home</a></li>
+          <li><a href="../index.html#features">Features</a></li>
+          <li><a href="../index.html#faq">FAQ</a></li>
+          <li><a href="../TextToNumber/index.html">Text to Number</a></li>
+          <li><a href="../Text-G/index.html">Language G</a></li>
+          <li><a href="../DryText/index.html">Dry Text</a></li>
+          <li><a href="../TextLong/index.html">Long Text</a></li>
+          <li><a href="../TextMonkey/index.html">Monkey Text</a></li>
+          <li><a href="../CatText/index.html">CatText</a></li>
+          <li><a href="../AlienText/index.html">AlienText</a></li>
+          <li><a href="../HackerText/index.html">HacKerTEXT</a></li>
+          <li><a href="../Statistik-Teks/index.html">Statistik & Analisis Teks</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h3>Contact Info</h3>
+        <p><i class="fas fa-envelope"></i> info@textconverter.com</p>
+        <p><i class="fas fa-phone"></i> +62 812-3456-7890</p>
+        <p><i class="fas fa-map-marker-alt"></i> Jakarta, Indonesia</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Newsletter</h3>
+        <p>Subscribe to get updates on new features and tools</p>
+        <form onsubmit="subscribeNewsletter(event)" style="margin-top: 15px;">
+          <input type="email" placeholder="Your email" required style="padding: 10px; border-radius: 8px; border: none; width: 100%; margin-bottom: 10px;">
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 Text Converter. All rights reserved. Made with <i class="fas fa-heart" style="color: var(--danger-color);"></i> in Indonesia</p>
+    </div>
+  </footer>
+
+  <!-- Modals -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeLoginModal()"><i class="fas fa-times"></i></button>
+      <h2 class="modal-title">Login</h2>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group"><label for="email">Email</label><input type="email" id="email" required></div>
+        <div class="form-group"><label for="password">Password</label><input type="password" id="password" required></div>
+        <div class="form-buttons">
+          <button type="submit" class="btn-login">Login</button>
+          <button type="button" class="btn-cancel" onclick="closeLoginModal()">Cancel</button>
+        </div>
+      </form>
+      <div class="switch-form">Don't have an account? <a href="#" onclick="switchToRegister()">Register</a></div>
+    </div>
+  </div>
+
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeRegisterModal()"><i class="fas fa-times"></i></button>
+      <h2 class="modal-title">Register</h2>
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-group"><label for="regName">Name</label><input type="text" id="regName" required></div>
+        <div class="form-group"><label for="regEmail">Email</label><input type="email" id="regEmail" required></div>
+        <div class="form-group"><label for="regPassword">Password</label><input type="password" id="regPassword" required></div>
+        <div class="form-group"><label for="regConfirmPassword">Confirm Password</label><input type="password" id="regConfirmPassword" required></div>
+        <div class="form-buttons">
+          <button type="submit" class="btn-login">Register</button>
+          <button type="button" class="btn-cancel" onclick="closeRegisterModal()">Cancel</button>
+        </div>
+      </form>
+      <div class="switch-form">Already have an account? <a href="#" onclick="switchToLogin()">Login</a></div>
+    </div>
+  </div>
+
+  <div class="confirm-modal" id="confirmModal">
+    <div class="confirm-content">
+      <h3 class="confirm-title">Konfirmasi Token</h3>
+      <p class="confirm-message">Gunakan <span id="tokenCost" class="confirm-token-cost">1</span> token untuk konversi ini?</p>
+      <div class="confirm-buttons">
+        <button class="confirm-btn copy-btn" onclick="confirmGenerate()">Ya</button>
+        <button class="confirm-btn clear-btn" onclick="cancelGenerate()">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="presentation-mode" id="presentationMode">
+    <button class="presentation-close" onclick="closePresentationMode()"><i class="fas fa-times"></i></button>
+    <div class="presentation-content">
+      <div class="presentation-output" id="presentationOutput"></div>
+      <div class="presentation-input" id="presentationInput"></div>
+    </div>
+  </div>
+
+  <div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">Success!</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../script.js"></script>
+  
+  <script>
+    // --- Local Logic for CatText ---
+
+    // Maps (Using 'm', 'e', 'o', 'w' combinations)
+    // Base 4 encoding: m=0, e=1, o=2, w=3
+    const encodeMap = {
+      A:"mmmmm", B:"mmmme", C:"mmmmo", D:"mmmwm",
+      E:"mmmem", F:"mmmee", G:"mmmeo", H:"mmmew",
+      I:"mmmom", J:"mmmoe", K:"mmmoo", L:"mmmow",
+      M:"mmmwm", N:"mmmwe", O:"mmmwo", P:"mmmww",
+      Q:"mmemm", R:"mmeme", S:"mmemo", T:"mmemw",
+      U:"mmeem", V:"mmeee", W:"mmeeo", X:"mmeew",
+      Y:"mmeom", Z:"mmeoe"
+    };
+    const decodeMap = {};
+    for (const [char, code] of Object.entries(encodeMap)) { decodeMap[code] = char; }
+
+    // Local Data
+    let templates = JSON.parse(localStorage.getItem('templatesCat')) || [
+      { text: "hello", result: "mmmew mmmeo mmmom mmeem mmmwo" }
+    ];
+    let stats = JSON.parse(localStorage.getItem('statsCat')) || {
+      totalConversions: 0, totalCharacters: 0, characterUsage: {}, modeUsage: { encode: 0, decode: 0 }
+    };
+    let conversionHistory = JSON.parse(localStorage.getItem('historyCat')) || [];
+
+    // Init
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        const intro = document.getElementById('introOverlay');
+        if(intro) { intro.style.opacity = '0'; setTimeout(() => intro.style.display = 'none', 500); }
+      }, 2500);
+
+      loadHistory(); loadTemplates(); updateStats();
+
+      // Tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          this.classList.add('active');
+          document.getElementById(this.dataset.tab).classList.add('active');
+        });
+      });
+      
+      document.addEventListener('click', function(e) {
+        const shareOptions = document.getElementById('shareOptions');
+        if (shareOptions && !shareOptions.contains(e.target) && e.target.id !== 'shareBtn') {
+          shareOptions.classList.remove('show');
+        }
+      });
+    });
+
+    // --- Token Integration ---
+    
+    function calculateTokenCost(textLength) { return 1; }
+
+    function useTokensLocal(amount) {
+      if (typeof tokenData === 'undefined') return false; 
+      if (tokenData.count >= amount) {
+        tokenData.count -= amount;
+        if(typeof saveTokenData === 'function') saveTokenData();
+        if(typeof updateTokenDisplay === 'function') updateTokenDisplay();
+        return true;
+      } else {
+        showNotification('Token tidak cukup!');
+        return false;
+      }
+    }
+
+    function showConfirmModal() {
+      const inputText = document.getElementById("inputText").value.trim();
+      if (!inputText) { showNotification("Masukkan teks terlebih dahulu!"); return; }
+      
+      const tokenCost = calculateTokenCost(inputText.length);
+      document.getElementById('tokenCost').textContent = tokenCost;
+      document.getElementById('confirmModal').classList.add('active');
+    }
+
+    function confirmGenerate() {
+      document.getElementById('confirmModal').classList.remove('active');
+      const inputText = document.getElementById("inputText").value;
+      const tokenCost = calculateTokenCost(inputText.length);
+      
+      if (!useTokensLocal(tokenCost)) return;
+      
+      performConversion();
+      showNotification("Konversi berhasil!");
+    }
+
+    function cancelGenerate() {
+      document.getElementById('confirmModal').classList.remove('active');
+    }
+
+    // --- Core Logic ---
+
+    function encodeText(text){
+      text = text.toUpperCase();
+      let out = "";
+      let mappingBreakdown = [];
+      
+      for (let ch of text){
+        if (/[A-Z]/.test(ch)){
+          out += encodeMap[ch] + " ";
+          mappingBreakdown.push(`${ch} > ${encodeMap[ch]}`);
+        } else if (ch === " ") {
+          out += "/ ";
+          mappingBreakdown.push(`spasi > /`);
+        }
+      }
+      return { result: out.trim(), breakdown: mappingBreakdown };
+    }
+
+    function decodeText(text){
+      const parts = text.trim().split(/\s+/);
+      let out = "";
+      let mappingBreakdown = [];
+      
+      for (let token of parts){
+        if (token === "/") { out += " "; mappingBreakdown.push(`/ > spasi`); continue; }
+        const char = decodeMap[token] ?? "?";
+        out += char.toLowerCase();
+        mappingBreakdown.push(`${token} > ${char}`);
+      }
+      return { result: out, breakdown: mappingBreakdown };
+    }
+
+    function performConversion() {
+      const input = document.getElementById("inputText").value;
+      const encodeResult = encodeText(input);
+      const result = encodeResult.result;
+      const breakdown = encodeResult.breakdown;
+      
+      document.getElementById("output").value = result;
+      document.getElementById("charCount").textContent = `${result.length} characters`;
+      
+      if (input) {
+        ["copyBtn", "shareBtn", "presentBtn", "clearBtn", "mappingBreakdown", "translation"].forEach(id => document.getElementById(id).classList.remove("hidden"));
+        document.getElementById("mappingBreakdown").innerHTML = "<strong>Rincian:</strong><br>" + breakdown.join(", ");
+        document.getElementById("translationText").textContent = input;
+        
+        addToHistory(input, result, 'encode');
+        updateConversionStats(input, result, 'encode');
+      }
+    }
+
+    // REVERSE (Instant)
+    function reverseConvert(){
+      const input = document.getElementById("reverseInput").value;
+      if(!input) { /* hide elements */ return; }
+      
+      const decodeResult = decodeText(input);
+      const result = decodeResult.result;
+      const breakdown = decodeResult.breakdown;
+      
+      document.getElementById("reverseOutput").value = result;
+      document.getElementById("reverseCharCount").textContent = `${result.length} characters`;
+      
+      if (input) {
+        document.getElementById("reverseCopyBtn").classList.remove("hidden");
+        document.getElementById("reverseClearBtn").classList.remove("hidden");
+        document.getElementById("reverseMappingBreakdown").classList.remove("hidden");
+        document.getElementById("reverseMappingBreakdown").innerHTML = "<strong>Rincian:</strong><br>" + breakdown.join(", ");
+      }
+    }
+
+    // --- Helper Functions ---
+
+    function copyResult() { document.getElementById("output").select(); document.execCommand("copy"); showNotification("Copied!"); }
+    function copyReverseResult() { document.getElementById("reverseOutput").select(); document.execCommand("copy"); showNotification("Copied!"); }
+    function clearAll() { document.getElementById("inputText").value = ""; document.getElementById("output").value = ""; /* reset buttons */ }
+    function clearReverseAll() { document.getElementById("reverseInput").value = ""; document.getElementById("reverseOutput").value = ""; }
+
+    function addToHistory(original, converted, mode) {
+      const exists = conversionHistory.some(item => item.original === original && item.converted === converted && item.mode === mode);
+      if (!exists) {
+        conversionHistory.unshift({ original, converted, mode, timestamp: new Date().toISOString() });
+        if (conversionHistory.length > 20) conversionHistory = conversionHistory.slice(0, 20);
+        localStorage.setItem('historyCat', JSON.stringify(conversionHistory));
+        loadHistory();
+      }
+    }
+    
+    function loadHistory() {
+      const container = document.getElementById('historyContainer');
+      if (!conversionHistory.length) { container.innerHTML = '<p style="text-align:center; color:#666;">No history</p>'; return; }
+      container.innerHTML = conversionHistory.map((item, index) => `
+        <div class="history-item" onclick="useHistoryItem(${index})">
+          <div class="history-text">${item.original} (${item.mode})</div>
+          <div class="history-result">${item.converted}</div>
+          <button class="delete-history" onclick="event.stopPropagation(); deleteHistoryItem(${index})"><i class="fas fa-times"></i></button>
+        </div>
+      `).join('');
+    }
+    
+    function useHistoryItem(index) {
+        const item = conversionHistory[index];
+        if(item.mode === 'encode') {
+            document.getElementById('inputText').value = item.original;
+            document.getElementById('output').value = item.converted;
+            document.querySelector('[data-tab="converter"]').click();
+        } else {
+            document.getElementById('reverseInput').value = item.original;
+            document.getElementById('reverseOutput').value = item.converted;
+            document.querySelector('[data-tab="reverse"]').click();
+        }
+    }
+    
+    function deleteHistoryItem(index) { conversionHistory.splice(index, 1); localStorage.setItem('historyCat', JSON.stringify(conversionHistory)); loadHistory(); }
+    function clearHistory() { if(confirm('Clear all history?')) { conversionHistory = []; localStorage.setItem('historyCat', JSON.stringify(conversionHistory)); loadHistory(); } }
+    function exportHistory() { const data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(conversionHistory, null, 2)); const a = document.createElement('a'); a.setAttribute("href", data); a.setAttribute("download", "history.json"); a.click(); }
+
+    function toggleShareOptions() { document.getElementById('shareOptions').classList.toggle('show'); }
+    function shareToSocial(platform) { /* Logic same */ toggleShareOptions(); }
+    function downloadAsFile() { /* Logic same */ toggleShareOptions(); }
+
+    function openPresentationMode() { document.getElementById('presentationOutput').textContent = document.getElementById("output").value; document.getElementById('presentationInput').textContent = document.getElementById("inputText").value; document.getElementById('presentationMode').classList.add('active'); }
+    function closePresentationMode() { document.getElementById('presentationMode').classList.remove('active'); }
+
+    function loadTemplates() {
+      const container = document.getElementById('templateContainer');
+      container.innerHTML = templates.map((t, i) => `
+        <div class="template-item" onclick="useTemplate(${i})">
+            ${t.text} <i class="fas fa-arrow-right"></i> <span style="font-size:10px">${t.result.substring(0,15)}...</span>
+            <i class="fas fa-times" onclick="event.stopPropagation(); removeTemplate(${i})"></i>
+        </div>
+      `).join('');
+    }
+    function useTemplate(index) { document.getElementById('inputText').value = templates[index].text; document.querySelector('[data-tab="converter"]').click(); }
+    function addTemplate() {
+        const text = document.getElementById('newTemplateText').value.trim();
+        if(!text) return;
+        const result = encodeText(text).result;
+        templates.push({ text, result });
+        localStorage.setItem('templatesCat', JSON.stringify(templates));
+        loadTemplates();
+        document.getElementById('newTemplateText').value = '';
+    }
+    function removeTemplate(index) { templates.splice(index, 1); localStorage.setItem('templatesCat', JSON.stringify(templates)); loadTemplates(); }
+
+    function updateConversionStats(text, result, mode) {
+      stats.totalConversions++; stats.totalCharacters += text.length; stats.modeUsage[mode]++;
+      for (const char of text.toLowerCase()) { if (!stats.characterUsage[char]) stats.characterUsage[char] = 0; stats.characterUsage[char]++; }
+      localStorage.setItem('statsCat', JSON.stringify(stats));
+      updateStats();
+    }
+    function updateStats() {
+      document.getElementById('totalConversions').textContent = stats.totalConversions;
+      document.getElementById('totalCharacters').textContent = stats.totalCharacters;
+      let mostUsedChar = '-'; let maxUsage = 0;
+      for (const char in stats.characterUsage) { if (stats.characterUsage[char] > maxUsage) { maxUsage = stats.characterUsage[char]; mostUsedChar = char; } }
+      document.getElementById('mostUsedChar').textContent = mostUsedChar;
+      let favoriteMode = 'Encode'; let maxModeUsage = 0;
+      for (const mode in stats.modeUsage) { if (stats.modeUsage[mode] > maxModeUsage) { maxModeUsage = stats.modeUsage[mode]; favoriteMode = mode.charAt(0).toUpperCase() + mode.slice(1); } }
+      document.getElementById('favoriteMode').textContent = favoriteMode;
+    }
+  </script>
+</body>
+</html>
